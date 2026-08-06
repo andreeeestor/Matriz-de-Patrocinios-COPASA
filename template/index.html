@@ -1288,6 +1288,12 @@
 
             input.addEventListener("input", function () {
               group.classList.toggle("mp-has-value", this.value.trim() !== "");
+              checkForm();
+              atualizarScore();
+            });
+            input.addEventListener("change", function () {
+              checkForm();
+              atualizarScore();
             });
 
             group.appendChild(input);
@@ -1310,11 +1316,14 @@
 
         function calcularScore() {
           var total = 0;
-          form.querySelectorAll('input[type="number"]').forEach(function (inp) {
-            var val = parseFloat(inp.value);
-            if (!isNaN(val)) total += val;
+          form.querySelectorAll("input").forEach(function (inp) {
+            if ((inp.type === "number" || (inp.id && inp.id.endsWith("_nota"))) && inp.value) {
+              var valStr = inp.value.toString().replace(",", ".").trim();
+              var val = parseFloat(valStr);
+              if (!isNaN(val)) total += val;
+            }
           });
-          return total;
+          return Math.round(total * 100) / 100;
         }
 
         function getClass(score) {
@@ -1371,10 +1380,15 @@
         function animNumber(el, from, to, dur) {
           var start = performance.now();
           var diff = to - from;
+          if (Math.abs(diff) < 0.01) {
+            el.textContent = (to % 1 === 0) ? to : to.toFixed(1);
+            return;
+          }
           function step(ts) {
             var p = Math.min((ts - start) / dur, 1);
             var eased = 1 - Math.pow(1 - p, 3);
-            el.textContent = Math.round(from + diff * eased);
+            var val = from + diff * eased;
+            el.textContent = (val % 1 === 0) ? Math.round(val) : val.toFixed(1);
             if (p < 1) requestAnimationFrame(step);
           }
           requestAnimationFrame(step);
@@ -1382,7 +1396,7 @@
 
         function atualizarScore() {
           var total = calcularScore();
-          var current = parseInt(totalSpan.textContent) || 0;
+          var current = parseFloat(totalSpan.textContent) || 0;
           animNumber(totalSpan, current, total, 120);
 
           var cls = getClass(total);
@@ -1392,7 +1406,7 @@
           classSpan.style.borderColor = cls.border;
           classSpan.style.border = "1px solid " + cls.border;
 
-          barFill.style.width = Math.min((total / 1000) * 100, 100) + "%";
+          barFill.style.width = Math.min((total / 722) * 100, 100) + "%";
           return total;
         }
 
@@ -1412,15 +1426,13 @@
           }
         }
 
-        form.querySelectorAll("input, textarea").forEach(function (inp) {
-          inp.addEventListener("input", function () {
-            checkForm();
-            if (inp.type === "number") atualizarScore();
-          });
-          inp.addEventListener("change", function () {
-            checkForm();
-            if (inp.type === "number") atualizarScore();
-          });
+        form.addEventListener("input", function () {
+          checkForm();
+          atualizarScore();
+        });
+        form.addEventListener("change", function () {
+          checkForm();
+          atualizarScore();
         });
 
         resetBtn.addEventListener("click", function () {
