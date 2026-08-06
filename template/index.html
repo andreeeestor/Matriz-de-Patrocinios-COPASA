@@ -1,0 +1,1598 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Matriz de Patrocínios COPASA</title>
+    <meta
+      name="description"
+      content="Formulário de avaliação integrada para patrocínios COPASA"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      #mp-root {
+        all: initial;
+        display: block;
+        font-family:
+          "DM Sans",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        color: #0f172a;
+        background: #f8fafc;
+        padding: 20px 16px;
+        max-width: 1060px;
+        margin: 0 auto;
+        box-sizing: border-box;
+      }
+      #mp-root * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      #mp-root .mp-login-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(248, 250, 252, 0.92);
+        backdrop-filter: blur(8px);
+        transition:
+          opacity 0.3s ease,
+          visibility 0.3s ease;
+      }
+      #mp-root .mp-login-overlay.mp-hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      #mp-root .mp-login-card {
+        width: 100%;
+        max-width: 380px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 32px 28px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+      }
+      #mp-root .mp-login-header {
+        text-align: center;
+        margin-bottom: 24px;
+      }
+      #mp-root .mp-login-header h2 {
+        font-family: "Playfair Display", Georgia, serif;
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #0f172a;
+        margin-top: 6px;
+      }
+      #mp-root .mp-login-header p {
+        font-size: 0.82rem;
+        color: #475569;
+        margin-top: 4px;
+      }
+      #mp-root .mp-login-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      #mp-root .mp-login-error {
+        display: none;
+        font-size: 0.78rem;
+        color: #b91c1c;
+        background: #fee2e2;
+        border: 1px solid #fca5a5;
+        border-radius: 8px;
+        padding: 10px 14px;
+        text-align: center;
+      }
+      #mp-root .mp-login-error.mp-show {
+        display: block;
+      }
+      #mp-root .mp-field-group {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      #mp-root .mp-field-group label {
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: #475569;
+      }
+      #mp-root .mp-field-group input,
+      #mp-root .mp-field-group textarea,
+      #mp-root .mp-field-group select {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 0.88rem;
+        font-family: "DM Sans", sans-serif;
+        color: #0f172a;
+        outline: none;
+        transition:
+          border-color 0.15s,
+          box-shadow 0.15s;
+        width: 100%;
+      }
+      #mp-root .mp-field-group input:focus,
+      #mp-root .mp-field-group textarea:focus {
+        border-color: #0ea5e9;
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+      }
+      #mp-root .mp-field-group textarea {
+        resize: vertical;
+        min-height: 68px;
+        line-height: 1.5;
+      }
+      #mp-root .mp-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        padding: 12px 32px;
+        border: none;
+        border-radius: 10px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      #mp-root .mp-btn-primary {
+        background: #0ea5e9;
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(14, 165, 233, 0.15);
+        border: 1px solid #0ea5e9;
+        cursor: not-allowed;
+        opacity: 0.5;
+        pointer-events: none;
+        width: 100%;
+        justify-content: center;
+      }
+      #mp-root .mp-btn-primary.mp-enabled {
+        opacity: 1;
+        cursor: pointer;
+        pointer-events: auto;
+      }
+      #mp-root .mp-btn-primary.mp-enabled:hover {
+        background: #0284c7;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(14, 165, 233, 0.25);
+      }
+      #mp-root .mp-btn-secondary {
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        color: #0f172a;
+      }
+      #mp-root .mp-btn-secondary:hover {
+        background: #e2e8f0;
+      }
+      #mp-root .mp-btn .mp-spinner {
+        display: none;
+        width: 17px;
+        height: 17px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: mp-spin 0.6s linear infinite;
+      }
+      #mp-root .mp-btn.mp-loading .mp-btn-text {
+        display: none;
+      }
+      #mp-root .mp-btn.mp-loading .mp-spinner {
+        display: block;
+      }
+      @keyframes mp-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      #mp-root .mp-score-panel {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 24px;
+        align-items: center;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 20px 28px;
+        margin-bottom: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      }
+      #mp-root .mp-score-left {
+        display: flex;
+        align-items: baseline;
+        gap: 16px;
+      }
+      #mp-root .mp-score-number {
+        font-family: "Playfair Display", Georgia, serif;
+        font-size: 2.8rem;
+        font-weight: 700;
+        line-height: 1;
+        letter-spacing: -1px;
+        min-width: 60px;
+        color: #0f172a;
+      }
+      #mp-root .mp-score-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      #mp-root .mp-score-meta-label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+      }
+      #mp-root .mp-score-bar-outer {
+        width: 200px;
+        height: 4px;
+        background: #e2e8f0;
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      #mp-root .mp-score-bar-inner {
+        height: 100%;
+        width: 0%;
+        background: #0ea5e9;
+        border-radius: 2px;
+        transition: width 0.3s ease;
+      }
+      #mp-root .mp-score-right {
+        text-align: right;
+      }
+      #mp-root .mp-classification-tag {
+        font-size: 0.82rem;
+        font-weight: 600;
+        padding: 6px 18px;
+        border-radius: 8px;
+        display: inline-block;
+        transition: all 0.15s ease;
+        letter-spacing: 0.3px;
+        border: 1px solid transparent;
+      }
+      #mp-root .mp-classification-hint {
+        font-size: 0.68rem;
+        color: #94a3b8;
+        margin-top: 6px;
+        letter-spacing: 0.5px;
+      }
+
+      #mp-root .mp-section {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        margin-bottom: 10px;
+        overflow: hidden;
+      }
+      #mp-root .mp-section:hover {
+        border-color: #cbd5e1;
+      }
+      #mp-root .mp-section.mp-active {
+        border-color: #38bdf8;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+      }
+      #mp-root .mp-section-header {
+        padding: 16px 22px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: background 0.15s ease;
+        user-select: none;
+      }
+      #mp-root .mp-section-header:hover {
+        background: #f1f5f9;
+      }
+      #mp-root .mp-section-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      #mp-root .mp-section-icon svg {
+        width: 17px;
+        height: 17px;
+      }
+      #mp-root .mp-section-title {
+        flex: 1;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #0f172a;
+      }
+      #mp-root .mp-section-count {
+        font-size: 0.7rem;
+        color: #94a3b8;
+        font-weight: 400;
+      }
+      #mp-root .mp-section-arrow {
+        width: 18px;
+        height: 18px;
+        color: #94a3b8;
+        transition:
+          transform 0.2s ease,
+          color 0.15s;
+      }
+      #mp-root .mp-section.mp-active .mp-section-arrow {
+        transform: rotate(180deg);
+        color: #0ea5e9;
+      }
+      #mp-root .mp-section-body {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.25s ease;
+      }
+      #mp-root .mp-section.mp-active .mp-section-body {
+        max-height: 4000px;
+      }
+      #mp-root .mp-section-body-inner {
+        padding: 4px 22px 26px;
+      }
+      #mp-root .mp-section-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+        gap: 16px 24px;
+      }
+
+      #mp-root .mp-divider {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin: 28px 0 12px;
+      }
+      #mp-root .mp-divider::before,
+      #mp-root .mp-divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent 0%,
+          #cbd5e1 50%,
+          transparent 100%
+        );
+      }
+      #mp-root .mp-divider-label {
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 2.5px;
+        text-transform: uppercase;
+        color: #64748b;
+        white-space: nowrap;
+        padding: 0 4px;
+      }
+
+      #mp-root .mp-field-group {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      #mp-root .mp-field-group label {
+        font-size: 0.72rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: #475569;
+        transition: color 0.15s ease;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      #mp-root .mp-required-dot {
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: #0ea5e9;
+        display: inline-block;
+      }
+      #mp-root .mp-field-group:focus-within label {
+        color: #0ea5e9;
+      }
+      #mp-root .mp-field-group input,
+      #mp-root .mp-field-group textarea {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 0.88rem;
+        font-family: "DM Sans", sans-serif;
+        color: #0f172a;
+        outline: none;
+        transition: all 0.15s ease;
+        width: 100%;
+      }
+      #mp-root .mp-field-group input:hover,
+      #mp-root .mp-field-group textarea:hover {
+        border-color: #cbd5e1;
+        background: #fafbfc;
+      }
+      #mp-root .mp-field-group input:focus,
+      #mp-root .mp-field-group textarea:focus {
+        border-color: #0ea5e9;
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+        background: #ffffff;
+      }
+      #mp-root .mp-field-group textarea {
+        resize: vertical;
+        min-height: 68px;
+      }
+      #mp-root .mp-field-group input[type="number"] {
+        -moz-appearance: textfield;
+      }
+      #mp-root .mp-field-group input[type="number"]::-webkit-outer-spin-button,
+      #mp-root .mp-field-group input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      #mp-root .mp-field-group.mp-has-value input,
+      #mp-root .mp-field-group.mp-has-value textarea {
+        border-color: rgba(14, 165, 233, 0.25);
+      }
+
+      #mp-root .mp-btn-wrapper {
+        display: flex;
+        justify-content: center;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-top: 28px;
+      }
+      #mp-root .mp-btn-wrapper .mp-btn {
+        min-width: 140px;
+        justify-content: center;
+      }
+
+      #mp-root .mp-toast {
+        position: fixed;
+        bottom: 28px;
+        right: 28px;
+        z-index: 10000;
+        padding: 14px 22px;
+        border-radius: 10px;
+        font-size: 0.84rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #ffffff;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e2e8f0;
+        transform: translateY(120%);
+        opacity: 0;
+        transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      #mp-root .mp-toast.mp-show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      #mp-root .mp-toast.mp-success {
+        border-color: #22c55e;
+        color: #15803d;
+      }
+      #mp-root .mp-toast.mp-error {
+        border-color: #ef4444;
+        color: #b91c1c;
+      }
+      #mp-root .mp-toast svg {
+        width: 17px;
+        height: 17px;
+        flex-shrink: 0;
+      }
+
+      #mp-root .mp-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 2px;
+        background: #0ea5e9;
+        z-index: 9998;
+        transition: width 0.2s ease;
+        width: 0%;
+      }
+
+      #mp-root .mp-ic-blue {
+        background: #eff6ff;
+        color: #3b82f6;
+      }
+      #mp-root .mp-ic-violet {
+        background: #f5f3ff;
+        color: #8b5cf6;
+      }
+      #mp-root .mp-ic-sky {
+        background: #f0f9ff;
+        color: #0ea5e9;
+      }
+      #mp-root .mp-ic-teal {
+        background: #f0fdfa;
+        color: #14b8a6;
+      }
+      #mp-root .mp-ic-amber {
+        background: #fffbeb;
+        color: #f59e0b;
+      }
+      #mp-root .mp-ic-rose {
+        background: #fff1f2;
+        color: #f43f5e;
+      }
+      #mp-root .mp-ic-emerald {
+        background: #ecfdf5;
+        color: #10b981;
+      }
+      #mp-root .mp-ic-orange {
+        background: #fff7ed;
+        color: #f97316;
+      }
+      #mp-root .mp-ic-purple {
+        background: #faf5ff;
+        color: #a855f7;
+      }
+      #mp-root .mp-ic-cyan {
+        background: #ecfdf5;
+        color: #06b6d4;
+      }
+      #mp-root .mp-ic-yellow {
+        background: #fefce8;
+        color: #eab308;
+      }
+
+      @media (max-width: 768px) {
+        #mp-root .mp-score-panel {
+          grid-template-columns: 1fr;
+          padding: 18px 20px;
+        }
+        #mp-root .mp-score-left {
+          flex-wrap: wrap;
+        }
+        #mp-root .mp-score-bar-outer {
+          width: 100%;
+        }
+        #mp-root .mp-score-right {
+          text-align: left;
+        }
+        #mp-root .mp-section-grid {
+          grid-template-columns: 1fr;
+        }
+        #mp-root .mp-section-header {
+          padding: 14px 18px;
+        }
+        #mp-root .mp-section-body-inner {
+          padding: 4px 18px 20px;
+        }
+        #mp-root .mp-btn-wrapper {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        #mp-root .mp-btn-wrapper .mp-btn {
+          min-width: unset;
+        }
+        #mp-root .mp-divider {
+          margin: 20px 0 10px;
+        }
+      }
+      @media (max-width: 480px) {
+        #mp-root .mp-score-number {
+          font-size: 2.2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mp-root">
+      <div class="mp-progress" id="mpProgress"></div>
+
+      <div class="mp-toast" id="mpToast">
+        <svg
+          id="mpToastIcon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+          <polyline points="22 4 12 14.01 9 11.01" />
+        </svg>
+        <span id="mpToastMessage"></span>
+      </div>
+
+      <div class="mp-login-overlay" id="mpLoginOverlay">
+        <div class="mp-login-card">
+          <div class="mp-login-header">
+            <h2>Matriz Patrocínios</h2>
+            <p>Acesso restrito · insira suas credenciais</p>
+          </div>
+          <form class="mp-login-form" id="mpLoginForm" autocomplete="off">
+            <div class="mp-field-group">
+              <label for="mpLoginUser">Usuário</label>
+              <input
+                type="text"
+                id="mpLoginUser"
+                required
+                placeholder="Digite seu usuário"
+              />
+            </div>
+            <div class="mp-field-group">
+              <label for="mpLoginPass">Senha</label>
+              <input
+                type="password"
+                id="mpLoginPass"
+                required
+                placeholder="Digite sua senha"
+              />
+            </div>
+            <div class="mp-login-error" id="mpLoginError">
+              Usuário ou senha incorretos.
+            </div>
+            <button
+              type="submit"
+              class="mp-btn mp-btn-primary mp-enabled"
+              style="cursor: pointer; pointer-events: auto; opacity: 1"
+            >
+              Entrar
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div id="mpMainContent" style="display: none">
+        <div class="mp-score-panel">
+          <div class="mp-score-left">
+            <span id="mpTotalScore" class="mp-score-number">0</span>
+            <div class="mp-score-meta">
+              <span class="mp-score-meta-label">Pontuação Total</span>
+              <div class="mp-score-bar-outer">
+                <div id="mpScoreBarFill" class="mp-score-bar-inner"></div>
+              </div>
+            </div>
+          </div>
+          <div class="mp-score-right">
+            <span id="mpClassification" class="mp-classification-tag">—</span>
+            <div class="mp-classification-hint">de 0 a 1000 pontos</div>
+          </div>
+        </div>
+
+        <form id="mpForm" autocomplete="off">
+          <div id="mpSectionsContainer"></div>
+          <div class="mp-btn-wrapper">
+            <button
+              type="button"
+              id="mpResetBtn"
+              class="mp-btn mp-btn-secondary"
+            >
+              Limpar
+            </button>
+            <button type="button" id="mpGerarBtn" class="mp-btn mp-btn-primary">
+              <span class="mp-btn-text">Gerar Planilha</span>
+              <span class="mp-spinner"></span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        var ICONS = {
+          clipboard:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>',
+          user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+          fileText:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+          dollar:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',
+          target:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+          building:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><line x1="8" y1="6" x2="8" y2="6"/><line x1="16" y1="6" x2="16" y2="6"/><line x1="12" y1="6" x2="12" y2="6"/><line x1="8" y1="10" x2="8" y2="10"/><line x1="16" y1="10" x2="16" y2="10"/><line x1="12" y1="10" x2="12" y2="10"/></svg>',
+          globe:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+          megaphone:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>',
+          heart:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+          package:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>',
+          trendingUp:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',
+          chevronDown:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
+        };
+
+        var SECTION_META = [
+          { icon: "clipboard", ic: "mp-ic-blue", divider: null },
+          { icon: "user", ic: "mp-ic-violet", divider: null },
+          { icon: "fileText", ic: "mp-ic-sky", divider: null },
+          { icon: "dollar", ic: "mp-ic-teal", divider: null },
+          {
+            icon: "target",
+            ic: "mp-ic-amber",
+            divider: "1. Alinhamento Estratégico",
+          },
+          {
+            icon: "building",
+            ic: "mp-ic-rose",
+            divider: "2. Capacidade Institucional",
+          },
+          {
+            icon: "globe",
+            ic: "mp-ic-emerald",
+            divider: "3. Impacto Social e ESG",
+          },
+          {
+            icon: "megaphone",
+            ic: "mp-ic-orange",
+            divider: "4. Comunicação e Marca",
+          },
+          { icon: "heart", ic: "mp-ic-purple", divider: "5. Voluntariado" },
+          { icon: "package", ic: "mp-ic-cyan", divider: "6. Negocial" },
+          {
+            icon: "trendingUp",
+            ic: "mp-ic-yellow",
+            divider: "7. Viabilidade Financeira",
+          },
+        ];
+
+        var sectionsData = [
+          {
+            title: "Dados Cadastrais do Projeto",
+            fields: [
+              {
+                id: "proponente",
+                label: "Proponente",
+                type: "text",
+                required: true,
+              },
+              {
+                id: "razao_social",
+                label: "Razão Social",
+                type: "text",
+                required: true,
+              },
+              { id: "cnpj", label: "CNPJ", type: "text", required: true },
+              { id: "rua", label: "Rua", type: "text" },
+              { id: "numero", label: "Número", type: "text" },
+              { id: "complemento", label: "Complemento", type: "text" },
+              { id: "bairro", label: "Bairro", type: "text" },
+              { id: "cidade", label: "Cidade", type: "text" },
+              { id: "estado", label: "Estado", type: "text" },
+              { id: "email", label: "E-mail", type: "email" },
+              { id: "redes_sociais", label: "Redes Sociais", type: "text" },
+            ],
+          },
+          {
+            title: "Dados do Representante Legal",
+            fields: [
+              { id: "rep_nome", label: "Nome", type: "text", required: true },
+              { id: "rep_cargo", label: "Cargo ou Função", type: "text" },
+              {
+                id: "rep_documento",
+                label: "Documento de Identidade",
+                type: "text",
+              },
+              { id: "rep_telefone", label: "Telefone (com DDD)", type: "text" },
+              { id: "rep_celular", label: "Celular (com DDD)", type: "text" },
+              { id: "rep_email", label: "E-mail", type: "email" },
+            ],
+          },
+          {
+            title: "Informações do Projeto",
+            fields: [
+              { id: "lei_incentivo", label: "Lei de Incentivo", type: "text" },
+              {
+                id: "nome_projeto",
+                label: "Nome do Projeto",
+                type: "text",
+                required: true,
+              },
+              {
+                id: "codigo_aprovacao",
+                label: "Código de Aprovação",
+                type: "text",
+              },
+              {
+                id: "artigo_aprovacao",
+                label: "Artigo de Aprovação — Art 18 ou 26?",
+                type: "text",
+              },
+              {
+                id: "data_publicacao",
+                label: "Data de Publicação do Projeto",
+                type: "date",
+              },
+              {
+                id: "data_prorrogacao",
+                label: "Data de Prorrogação do Projeto",
+                type: "date",
+              },
+              {
+                id: "data_final_captacao",
+                label: "Data Final de Captação",
+                type: "date",
+              },
+              {
+                id: "valor_total_aprovacao",
+                label: "Valor Total da Aprovação",
+                type: "text",
+              },
+              {
+                id: "valor_solicitado_aporte",
+                label: "Valor Solicitado para Aporte",
+                type: "text",
+              },
+              {
+                id: "local_realizacao",
+                label: "Local de Realização",
+                type: "text",
+              },
+              {
+                id: "periodo_realizacao",
+                label: "Período de Realização do Projeto",
+                type: "text",
+              },
+              { id: "objetivo", label: "Objetivo", type: "textarea" },
+              {
+                id: "publico_alvo",
+                label: "Público Alvo do Projeto",
+                type: "text",
+              },
+              {
+                id: "detalhamento_atividades",
+                label: "Detalhamento das Atividades",
+                type: "textarea",
+              },
+              { id: "cronograma", label: "Cronograma", type: "textarea" },
+            ],
+          },
+          {
+            title: "Dados Bancários do Projeto",
+            fields: [
+              { id: "banco", label: "Banco", type: "text" },
+              { id: "agencia", label: "Agência", type: "text" },
+              { id: "conta_corrente", label: "Conta Corrente", type: "text" },
+              { id: "operacao", label: "Operação", type: "text" },
+            ],
+          },
+          {
+            title: "Alinhamento Estratégico",
+            fields: [
+              {
+                id: "valores_organizacionais_nota",
+                label: "Valores Organizacionais (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "valores_organizacionais_obs", label: "Obs", type: "text" },
+              {
+                id: "diversidade_inclusao_nota",
+                label: "Diversidade e Inclusão (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "diversidade_inclusao_obs", label: "Obs", type: "text" },
+              {
+                id: "sustentabilidade_nota",
+                label: "Sustentabilidade (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "sustentabilidade_obs", label: "Obs", type: "text" },
+            ],
+          },
+          {
+            title: "Capacidade Institucional",
+            fields: [
+              {
+                id: "portfolio_nota",
+                label: "Portfolio (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "portfolio_obs", label: "Obs", type: "text" },
+              {
+                id: "experiencia_incentivos_nota",
+                label: "Experiência Incentivos (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "experiencia_incentivos_obs", label: "Obs", type: "text" },
+              {
+                id: "capacidade_tecnica_nota",
+                label: "Capacidade Técnica (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "capacidade_tecnica_obs", label: "Obs", type: "text" },
+              {
+                id: "governanca_nota",
+                label: "Governança (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "governanca_obs", label: "Obs", type: "text" },
+              {
+                id: "recursos_humanos_nota",
+                label: "Recursos Humanos (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "recursos_humanos_obs", label: "Obs", type: "text" },
+              {
+                id: "recursos_financeiros_nota",
+                label: "Recursos Financeiros (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "recursos_financeiros_obs", label: "Obs", type: "text" },
+              {
+                id: "experiencia_resultados_nota",
+                label: "Experiência e Resultados (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "experiencia_resultados_obs", label: "Obs", type: "text" },
+              {
+                id: "parcerias_nota",
+                label: "Parcerias (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "parcerias_obs", label: "Obs", type: "text" },
+            ],
+          },
+          {
+            title: "Impacto Social e ESG",
+            fields: [
+              {
+                id: "beneficiarios_diretos_nota",
+                label: "Beneficiários Diretos (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "beneficiarios_diretos_obs", label: "Obs", type: "text" },
+              {
+                id: "beneficiarios_indiretos_nota",
+                label: "Beneficiários Indiretos (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "beneficiarios_indiretos_obs", label: "Obs", type: "text" },
+              {
+                id: "educacao_nota",
+                label: "Educação (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "educacao_obs", label: "Obs", type: "text" },
+              {
+                id: "saude_nota",
+                label: "Saúde (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "saude_obs", label: "Obs", type: "text" },
+              {
+                id: "inclusao_nota",
+                label: "Inclusão (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "inclusao_obs", label: "Obs", type: "text" },
+              {
+                id: "esg_nota",
+                label: "ESG (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "esg_obs", label: "Obs", type: "text" },
+              {
+                id: "diferencial_artistico_nota",
+                label: "Diferencial Artístico/Cultural (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "diferencial_artistico_obs", label: "Obs", type: "text" },
+              {
+                id: "diferencial_social_nota",
+                label: "Diferencial Social/Ambiental (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "diferencial_social_obs", label: "Obs", type: "text" },
+              {
+                id: "diferencial_originalidade_nota",
+                label: "Diferencial de Originalidade (Nota)",
+                type: "number",
+                step: "any",
+              },
+              {
+                id: "diferencial_originalidade_obs",
+                label: "Obs",
+                type: "text",
+              },
+              {
+                id: "diferencial_tecnico_nota",
+                label: "Diferencial Técnico-Científico (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "diferencial_tecnico_obs", label: "Obs", type: "text" },
+              {
+                id: "diferencial_relacionamento_nota",
+                label: "Diferencial de Relacionamento (Nota)",
+                type: "number",
+                step: "any",
+              },
+              {
+                id: "diferencial_relacionamento_obs",
+                label: "Obs",
+                type: "text",
+              },
+              {
+                id: "interesse_coletivo_nota",
+                label: "Interesse Coletivo (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "interesse_coletivo_obs", label: "Obs", type: "text" },
+            ],
+          },
+          {
+            title: "Comunicação e Marca",
+            fields: [
+              {
+                id: "plano_comunicacao_nota",
+                label: "Plano de Comunicação (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "plano_comunicacao_obs", label: "Obs", type: "text" },
+              {
+                id: "redes_sociais_nota",
+                label: "Redes Sociais (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "redes_sociais_obs", label: "Obs", type: "text" },
+              {
+                id: "monitoramento_nota",
+                label: "Monitoramento (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "monitoramento_obs", label: "Obs", type: "text" },
+              {
+                id: "conteudo_institucional_nota",
+                label: "Conteúdo Institucional (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "conteudo_institucional_obs", label: "Obs", type: "text" },
+              {
+                id: "ativacoes_marca_nota",
+                label: "Ativações da Marca (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "ativacoes_marca_obs", label: "Obs", type: "text" },
+              {
+                id: "direitos_imagem_nota",
+                label: "Direitos de Imagem (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "direitos_imagem_obs", label: "Obs", type: "text" },
+              {
+                id: "contrapartida_imagem_nota",
+                label: "Contrapartida de Imagem (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "contrapartida_imagem_obs", label: "Obs", type: "text" },
+              {
+                id: "site_oficial_nota",
+                label: "Site Oficial (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "site_oficial_obs", label: "Obs", type: "text" },
+              {
+                id: "exibicao_video_nota",
+                label: "Exibição de Vídeo (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "exibicao_video_obs", label: "Obs", type: "text" },
+              {
+                id: "citacao_releases_nota",
+                label: "Citação nos Releases (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "citacao_releases_obs", label: "Obs", type: "text" },
+            ],
+          },
+          {
+            title: "Voluntariado",
+            fields: [
+              {
+                id: "voluntariado_corporativo_nota",
+                label: "Voluntariado Corporativo (Nota)",
+                type: "number",
+                step: "any",
+              },
+              {
+                id: "voluntariado_corporativo_obs",
+                label: "Obs",
+                type: "text",
+              },
+              {
+                id: "datas_comemorativas_nota",
+                label: "Datas Comemorativas (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "datas_comemorativas_obs", label: "Obs", type: "text" },
+              {
+                id: "engajamento_comunitario_nota",
+                label: "Engajamento Comunitário (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "engajamento_comunitario_obs", label: "Obs", type: "text" },
+            ],
+          },
+          {
+            title: "Negocial",
+            fields: [
+              {
+                id: "inclusao_material",
+                label: "Direito a inclusão material promocional nos kits",
+                type: "text",
+              },
+              {
+                id: "cessao_convites",
+                label: "Cessão de convites, ingressos e cortesias",
+                type: "text",
+              },
+              {
+                id: "estande",
+                label: "Cessão de direito de instalação de estande",
+                type: "text",
+              },
+              {
+                id: "palestrantes",
+                label: "Direito a indicar palestrantes",
+                type: "text",
+              },
+              {
+                id: "cortesias_escolas",
+                label: "Cessão de cortesias para escolas públicas",
+                type: "text",
+              },
+              {
+                id: "citacao_evento",
+                label: "Citação da Copasa na abertura/encerramento",
+                type: "text",
+              },
+            ],
+          },
+          {
+            title: "Viabilidade Financeira",
+            fields: [
+              {
+                id: "captacao_nota",
+                label: "Captação — % já captado (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "captacao_obs", label: "Obs", type: "text" },
+              {
+                id: "execucao_garantida_nota",
+                label: "Execução Garantida (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "execucao_garantida_obs", label: "Obs", type: "text" },
+              {
+                id: "cotas_nota",
+                label: "Cotas (Nota)",
+                type: "number",
+                step: "any",
+              },
+              { id: "cotas_obs", label: "Obs", type: "text" },
+            ],
+          },
+        ];
+
+        var container = document.getElementById("mpSectionsContainer");
+        sectionsData.forEach(function (section, idx) {
+          var meta = SECTION_META[idx] || SECTION_META[0];
+          if (meta.divider) {
+            var div = document.createElement("div");
+            div.className = "mp-divider";
+            div.innerHTML =
+              '<span class="mp-divider-label">' + meta.divider + "</span>";
+            container.appendChild(div);
+          }
+          var sectionDiv = document.createElement("div");
+          sectionDiv.className = "mp-section" + (idx === 0 ? " mp-active" : "");
+          var header = document.createElement("div");
+          header.className = "mp-section-header";
+          header.innerHTML =
+            '<div class="mp-section-icon ' +
+            meta.ic +
+            '">' +
+            ICONS[meta.icon] +
+            '</div><div class="mp-section-title">' +
+            section.title +
+            '</div><span class="mp-section-count">' +
+            section.fields.length +
+            " campo" +
+            (section.fields.length !== 1 ? "s" : "") +
+            '</span><span class="mp-section-arrow">' +
+            ICONS.chevronDown +
+            "</span>";
+          header.addEventListener("click", function () {
+            sectionDiv.classList.toggle("mp-active");
+          });
+          sectionDiv.appendChild(header);
+
+          var body = document.createElement("div");
+          body.className = "mp-section-body";
+          var inner = document.createElement("div");
+          inner.className = "mp-section-body-inner";
+          var grid = document.createElement("div");
+          grid.className = "mp-section-grid";
+
+          section.fields.forEach(function (field) {
+            var group = document.createElement("div");
+            group.className = "mp-field-group";
+            var label = document.createElement("label");
+            label.setAttribute("for", field.id);
+            label.innerHTML =
+              field.label +
+              (field.required ? ' <span class="mp-required-dot"></span>' : "");
+            group.appendChild(label);
+
+            var input;
+            if (field.type === "textarea") {
+              input = document.createElement("textarea");
+              input.rows = 3;
+            } else {
+              input = document.createElement("input");
+              input.type = field.type || "text";
+            }
+            input.id = field.id;
+            input.name = field.id;
+            if (field.required) input.required = true;
+            if (field.step) input.step = field.step;
+
+            input.addEventListener("input", function () {
+              group.classList.toggle("mp-has-value", this.value.trim() !== "");
+            });
+
+            group.appendChild(input);
+            grid.appendChild(group);
+          });
+
+          inner.appendChild(grid);
+          body.appendChild(inner);
+          sectionDiv.appendChild(body);
+          container.appendChild(sectionDiv);
+        });
+
+        var form = document.getElementById("mpForm");
+        var gerarBtn = document.getElementById("mpGerarBtn");
+        var resetBtn = document.getElementById("mpResetBtn");
+        var totalSpan = document.getElementById("mpTotalScore");
+        var classSpan = document.getElementById("mpClassification");
+        var barFill = document.getElementById("mpScoreBarFill");
+        var progress = document.getElementById("mpProgress");
+
+        function calcularScore() {
+          var total = 0;
+          form.querySelectorAll('input[type="number"]').forEach(function (inp) {
+            var val = parseFloat(inp.value);
+            if (!isNaN(val)) total += val;
+          });
+          return total;
+        }
+
+        function getClass(score) {
+          if (score < 100)
+            return {
+              label: "Zero",
+              color: "#ef4444",
+              bg: "rgba(239,68,68,0.08)",
+              border: "rgba(239,68,68,0.18)",
+            };
+          if (score < 200)
+            return {
+              label: "Ruim",
+              color: "#f97316",
+              bg: "rgba(249,115,22,0.08)",
+              border: "rgba(249,115,22,0.18)",
+            };
+          if (score < 300)
+            return {
+              label: "Regular",
+              color: "#eab308",
+              bg: "rgba(234,179,8,0.08)",
+              border: "rgba(234,179,8,0.18)",
+            };
+          if (score < 400)
+            return {
+              label: "Bom",
+              color: "#22c55e",
+              bg: "rgba(34,197,94,0.08)",
+              border: "rgba(34,197,94,0.18)",
+            };
+          if (score < 500)
+            return {
+              label: "Muito Bom",
+              color: "#3b82f6",
+              bg: "rgba(59,130,246,0.08)",
+              border: "rgba(59,130,246,0.18)",
+            };
+          if (score < 600)
+            return {
+              label: "Ótimo",
+              color: "#8b5cf6",
+              bg: "rgba(139,92,246,0.08)",
+              border: "rgba(139,92,246,0.18)",
+            };
+          return {
+            label: "Excelente",
+            color: "#ec4899",
+            bg: "rgba(236,72,153,0.08)",
+            border: "rgba(236,72,153,0.18)",
+          };
+        }
+
+        function animNumber(el, from, to, dur) {
+          var start = performance.now();
+          var diff = to - from;
+          function step(ts) {
+            var p = Math.min((ts - start) / dur, 1);
+            var eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = Math.round(from + diff * eased);
+            if (p < 1) requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
+        }
+
+        function atualizarScore() {
+          var total = calcularScore();
+          var current = parseInt(totalSpan.textContent) || 0;
+          animNumber(totalSpan, current, total, 120);
+
+          var cls = getClass(total);
+          classSpan.textContent = cls.label;
+          classSpan.style.color = cls.color;
+          classSpan.style.background = cls.bg;
+          classSpan.style.borderColor = cls.border;
+          classSpan.style.border = "1px solid " + cls.border;
+
+          barFill.style.width = Math.min((total / 1000) * 100, 100) + "%";
+          return total;
+        }
+
+        function checkForm() {
+          var required = form.querySelectorAll("[required]");
+          var filled = 0;
+          required.forEach(function (inp) {
+            if (inp.value.trim() !== "") filled++;
+          });
+          var pct = required.length > 0 ? (filled / required.length) * 100 : 0;
+          progress.style.width = pct + "%";
+
+          if (filled === required.length && required.length > 0) {
+            gerarBtn.classList.add("mp-enabled");
+          } else {
+            gerarBtn.classList.remove("mp-enabled");
+          }
+        }
+
+        form.querySelectorAll("input, textarea").forEach(function (inp) {
+          inp.addEventListener("input", function () {
+            checkForm();
+            if (inp.type === "number") atualizarScore();
+          });
+          inp.addEventListener("change", function () {
+            checkForm();
+            if (inp.type === "number") atualizarScore();
+          });
+        });
+
+        resetBtn.addEventListener("click", function () {
+          form.querySelectorAll("input, textarea").forEach(function (inp) {
+            if (inp.type !== "button" && inp.type !== "submit") {
+              inp.value = "";
+              var parent = inp.closest(".mp-field-group");
+              if (parent) parent.classList.remove("mp-has-value");
+            }
+          });
+          checkForm();
+          atualizarScore();
+          showToast("Campos limpos", "success");
+        });
+
+        document.querySelectorAll(".mp-btn").forEach(function (btn) {
+          btn.addEventListener("click", function (e) {
+            var rect = this.getBoundingClientRect();
+            var ripple = document.createElement("span");
+            ripple.style.position = "absolute";
+            ripple.style.borderRadius = "50%";
+            ripple.style.background = "rgba(255,255,255,0.3)";
+            ripple.style.pointerEvents = "none";
+            ripple.style.animation = "mp-ripple 0.3s ease-out forwards";
+            ripple.style.width = "0";
+            ripple.style.height = "0";
+            ripple.style.left = e.clientX - rect.left - 70 + "px";
+            ripple.style.top = e.clientY - rect.top - 70 + "px";
+            this.style.position = "relative";
+            this.style.overflow = "hidden";
+            this.appendChild(ripple);
+            setTimeout(function () {
+              ripple.remove();
+            }, 300);
+          });
+        });
+        var style = document.createElement("style");
+        style.textContent =
+          "@keyframes mp-ripple { from { width:0;height:0;opacity:1; } to { width:280px;height:280px;opacity:0; } }";
+        document.head.appendChild(style);
+
+        var API_BASE = (window.location.protocol === "file:" || window.location.port !== "8000") ? "http://localhost:8000" : "";
+
+        gerarBtn.addEventListener("click", async function () {
+          if (!this.classList.contains("mp-enabled")) return;
+          this.classList.add("mp-loading");
+
+          var token = sessionStorage.getItem("mp_token");
+          var formData = new FormData(form);
+          var data = {};
+          for (var pair of formData.entries()) {
+            data[pair[0]] = pair[1];
+          }
+
+          try {
+            var res = await fetch(API_BASE + "/planilha/gerar", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": token ? ("Bearer " + token) : ""
+              },
+              body: JSON.stringify(data),
+            });
+
+            if (res.status === 401) {
+              showToast("Sessão expirada. Faça login novamente.", "error");
+              sessionStorage.removeItem("mp_token");
+              checkAuth();
+              return;
+            }
+
+            if (res.ok) {
+              var blob = await res.blob();
+              var a = document.createElement("a");
+              a.href = URL.createObjectURL(blob);
+              a.download = "Matriz_Patrocinios_Preenchida.xlsx";
+              a.click();
+              URL.revokeObjectURL(a.href);
+              showToast("Planilha gerada com sucesso!", "success");
+            } else {
+              showToast("Erro ao gerar planilha. Tente novamente.", "error");
+            }
+          } catch (err) {
+            showToast("Erro de comunicação com o servidor.", "error");
+          } finally {
+            this.classList.remove("mp-loading");
+          }
+        });
+
+        function showToast(msg, type) {
+          var toast = document.getElementById("mpToast");
+          var icon = document.getElementById("mpToastIcon");
+          var text = document.getElementById("mpToastMessage");
+          toast.className = "mp-toast mp-" + type;
+          text.textContent = msg;
+          icon.innerHTML =
+            type === "success"
+              ? '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>'
+              : '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>';
+          toast.classList.add("mp-show");
+          setTimeout(function () {
+            toast.classList.remove("mp-show");
+          }, 3200);
+        }
+
+        var loginOverlay = document.getElementById("mpLoginOverlay");
+        var loginForm = document.getElementById("mpLoginForm");
+        var loginUser = document.getElementById("mpLoginUser");
+        var loginPass = document.getElementById("mpLoginPass");
+        var loginError = document.getElementById("mpLoginError");
+        var mainContent = document.getElementById("mpMainContent");
+
+        async function checkAuth() {
+          var token = sessionStorage.getItem("mp_token");
+          if (!token) {
+            loginOverlay.classList.remove("mp-hidden");
+            mainContent.style.display = "none";
+            return;
+          }
+          try {
+            var res = await fetch(API_BASE + "/auth/me", {
+              headers: { "Authorization": "Bearer " + token }
+            });
+            if (res.ok) {
+              loginOverlay.classList.add("mp-hidden");
+              mainContent.style.display = "block";
+            } else {
+              sessionStorage.removeItem("mp_token");
+              loginOverlay.classList.remove("mp-hidden");
+              mainContent.style.display = "none";
+            }
+          } catch (err) {
+            loginOverlay.classList.add("mp-hidden");
+            mainContent.style.display = "block";
+          }
+        }
+
+        loginForm.addEventListener("submit", async function (e) {
+          e.preventDefault();
+          loginError.classList.remove("mp-show");
+
+          var params = new URLSearchParams();
+          params.append("username", loginUser.value.trim());
+          params.append("password", loginPass.value);
+
+          try {
+            var res = await fetch(API_BASE + "/auth/token", {
+              method: "POST",
+              headers: { "Content-Type": "application/x-www-form-urlencoded" },
+              body: params
+            });
+
+            if (res.ok) {
+              var tokenData = await res.json();
+              sessionStorage.setItem("mp_token", tokenData.access_token);
+              loginOverlay.classList.add("mp-hidden");
+              mainContent.style.display = "block";
+              loginUser.value = "";
+              loginPass.value = "";
+              showToast("Acesso concedido!", "success");
+            } else {
+              loginError.classList.add("mp-show");
+            }
+          } catch (err) {
+            showToast("Erro de comunicação com o servidor.", "error");
+          }
+        });
+
+        checkAuth();
+        checkForm();
+        atualizarScore();
+      })();
+    </script>
+  </body>
+</html>
