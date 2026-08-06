@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from typing import Optional, Any
 
 class PlanilhaData(BaseModel):
+    # Proponente & Endereço
     proponente: Optional[str] = None
     razao_social: Optional[str] = None
     cnpj: Optional[str] = None
@@ -14,6 +15,7 @@ class PlanilhaData(BaseModel):
     email: Optional[str] = None
     redes_sociais: Optional[str] = None
 
+    # Representante Legal
     rep_nome: Optional[str] = None
     rep_cargo: Optional[str] = None
     rep_documento: Optional[str] = None
@@ -21,6 +23,7 @@ class PlanilhaData(BaseModel):
     rep_celular: Optional[str] = None
     rep_email: Optional[str] = None
 
+    # Projeto
     lei_incentivo: Optional[str] = None
     nome_projeto: Optional[str] = None
     codigo_aprovacao: Optional[str] = None
@@ -37,11 +40,13 @@ class PlanilhaData(BaseModel):
     detalhamento_atividades: Optional[str] = None
     cronograma: Optional[str] = None
 
+    # Dados Bancários
     banco: Optional[str] = None
     agencia: Optional[str] = None
     conta_corrente: Optional[str] = None
     operacao: Optional[str] = None
 
+    # Avaliação - Notas e Observações
     valores_organizacionais_nota: Optional[Any] = None
     valores_organizacionais_obs: Optional[str] = None
     diversidade_inclusao_nota: Optional[Any] = None
@@ -115,6 +120,7 @@ class PlanilhaData(BaseModel):
     engajamento_comunitario_nota: Optional[Any] = None
     engajamento_comunitario_obs: Optional[str] = None
 
+    # Negocial
     inclusao_material: Optional[str] = None
     cessao_convites: Optional[str] = None
     estande: Optional[str] = None
@@ -122,6 +128,7 @@ class PlanilhaData(BaseModel):
     cortesias_escolas: Optional[str] = None
     citacao_evento: Optional[str] = None
 
+    # Viabilidade
     captacao_nota: Optional[Any] = None
     captacao_obs: Optional[str] = None
     execucao_garantida_nota: Optional[Any] = None

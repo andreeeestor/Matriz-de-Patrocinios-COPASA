@@ -128,6 +128,18 @@ CELL_MAP = {
     "cotas_obs": (116, 4),
 }
 
+def parse_val(v):
+    if v is None:
+        return 0.0
+    if isinstance(v, (int, float)):
+        return float(v)
+    if isinstance(v, str) and v.strip() != "":
+        try:
+            return float(v.replace(",", ".").strip())
+        except ValueError:
+            return 0.0
+    return 0.0
+
 def gerar_planilha(dados: dict) -> bytes:
     wb = load_workbook(settings.MODELO_PLANILHA)
     ws = wb.active
@@ -142,6 +154,31 @@ def gerar_planilha(dados: dict) -> bytes:
                     except ValueError:
                         pass
                 ws.cell(row=linha, column=coluna, value=valor)
+
+    sec1_keys = ["valores_organizacionais_nota", "diversidade_inclusao_nota", "sustentabilidade_nota"]
+    sec2_keys = ["portfolio_nota", "experiencia_incentivos_nota", "capacidade_tecnica_nota", "governanca_nota", "recursos_humanos_nota", "recursos_financeiros_nota", "experiencia_resultados_nota", "parcerias_nota"]
+    sec3_keys = ["beneficiarios_diretos_nota", "beneficiarios_indiretos_nota", "educacao_nota", "saude_nota", "inclusao_nota", "esg_nota", "diferencial_artistico_nota", "diferencial_social_nota", "diferencial_originalidade_nota", "diferencial_tecnico_nota", "diferencial_relacionamento_nota", "interesse_coletivo_nota"]
+    sec4_keys = ["plano_comunicacao_nota", "redes_sociais_nota", "monitoramento_nota", "conteudo_institucional_nota", "ativacoes_marca_nota", "direitos_imagem_nota", "contrapartida_imagem_nota", "site_oficial_nota", "exibicao_video_nota", "citacao_releases_nota"]
+    sec5_keys = ["voluntariado_corporativo_nota", "datas_comemorativas_nota", "engajamento_comunitario_nota"]
+    sec6_keys = ["captacao_nota", "execucao_garantida_nota", "cotas_nota"]
+
+    s1 = sum(parse_val(dados.get(k)) for k in sec1_keys)
+    s2 = sum(parse_val(dados.get(k)) for k in sec2_keys)
+    s3 = sum(parse_val(dados.get(k)) for k in sec3_keys)
+    s4 = sum(parse_val(dados.get(k)) for k in sec4_keys)
+    s5 = sum(parse_val(dados.get(k)) for k in sec5_keys)
+    s6 = sum(parse_val(dados.get(k)) for k in sec6_keys)
+
+    ws.cell(row=124, column=2, value=s1)
+    ws.cell(row=125, column=2, value=s2)
+    ws.cell(row=126, column=2, value=s3)
+    ws.cell(row=127, column=2, value=s4)
+    ws.cell(row=128, column=2, value=s5)
+    ws.cell(row=129, column=2, value=s6)
+
+    ws.cell(row=79, column=3, value='=SUM(C67:C78)')
+    ws.cell(row=93, column=3, value='=SUM(C83:C92)')
+
     output = io.BytesIO()
     wb.save(output)
     output.seek(0)
