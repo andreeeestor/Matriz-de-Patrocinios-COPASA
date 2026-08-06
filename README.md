@@ -1,11 +1,11 @@
 # Matriz de Patrocínios COPASA
 
 ![Status](https://img.shields.io/badge/status-em_desenvolvimento-yellow)
-![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
+![Python](https://img.shields.io/badge/Python-3.12%2B-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.104%2B-green)
 ![License](https://img.shields.io/badge/licença-Proprietária-red)
 
-Sistema de avaliação e gestão de patrocínios da COPASA, desenvolvido para automatizar o processo de preenchimento, cálculo de pontuação e geração da planilha oficial da Matriz Integrada de Avaliação de Patrocínios.
+Sistema corporativo de avaliação e gestão de patrocínios da COPASA, desenvolvido para automatizar o processo de preenchimento de propostas, cálculo em tempo real de pontuação e geração padronizada da planilha oficial da Matriz Integrada de Avaliação de Patrocínios.
 
 ---
 
@@ -31,7 +31,7 @@ Sistema de avaliação e gestão de patrocínios da COPASA, desenvolvido para au
 A **Matriz de Patrocínios COPASA** é uma solução corporativa que digitaliza e otimiza o fluxo de avaliação de projetos culturais, sociais e esportivos submetidos à COPASA. O sistema substitui o preenchimento manual de planilhas locais, oferecendo:
 
 * **Formulário Digital Integrado:** Interface amigável com validação dos campos obrigatórios em tempo real.
-* **Cálculo Automatizado:** Determinação instantânea de pontuação e classificação final (de *Zero* a *Excelente*).
+* **Cálculo Automatizado:** Determinação instantânea de pontuação e classificação final (de *Zero* a *Excelente* em escala de até 722 pontos).
 * **Consistência de Dados:** Geração de relatórios em Excel padronizados exatamente conforme o modelo oficial da companhia.
 * **Segurança:** Controle de acesso autenticado via tokens JWT.
 * **Integração WCM:** Layout responsivo pronto para embutimento no portal WCM da COPASA.
@@ -72,18 +72,18 @@ flowchart TB
 ### Back-end
 | Tecnologia | Versão | Finalidade |
 | :--- | :---: | :--- |
-| **FastAPI** | `^0.104` | Framework web assíncrono de alta performance |
-| **Uvicorn** | `^0.24` | Servidor de aplicação ASGI |
-| **Python-JOSE** | `^3.3` | Implementação e validação de tokens JWT |
-| **Passlib** | `^1.7` | Hashing seguro de senhas (BCrypt) |
+| **FastAPI** | `^0.141` | Framework web assíncrono de alta performance |
+| **Uvicorn** | `^0.52` | Servidor de aplicação ASGI |
+| **Python-JOSE** | `^3.5` | Implementação e validação de tokens JWT |
+| **Passlib** | `^1.7` | Hashing seguro de senhas (PBKDF2-SHA256) |
 | **OpenPyXL** | `^3.1` | Leitura, escrita e manipulação de modelos Excel |
-| **Python-Dotenv** | `^1.0` | Gerenciamento de variáveis de ambiente |
+| **Pydantic-Settings** | `^2.14` | Gerenciamento e validação de variáveis de ambiente |
 
 ### Front-end
 | Tecnologia | Finalidade |
 | :--- | :--- |
 | **HTML5 / CSS3** | Estrutura semântica, responsividade e componentes visuais |
-| **JavaScript (ES6+)** | Lógica de preenchimento, validações em tempo real e consumo da API |
+| **JavaScript (ES6+)** | Lógica de preenchimento, validação em tempo real e consumo da API |
 
 ### Gerenciamento de Dependências
 | Ferramenta | Finalidade |
@@ -94,11 +94,11 @@ flowchart TB
 
 ## 📦 Pré-requisitos
 
-* **Python 3.10** ou superior
+* **Python 3.12** ou superior
 * **UV** (recomendado) ou `pip`
 * **Git**
 
-### Instalando o UV (opcional, recomendado)
+### Instalando o UV (recomendado)
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -114,26 +114,23 @@ git clone https://github.com/seu-usuario/matriz-patrocinio.git
 cd matriz-patrocinio
 ```
 
-### 2. Ambiente Virtual
-Criar e ativar o ambiente virtual:
-
+### 2. Criar o Ambiente Virtual e Instalar Dependências
+Com o **UV**:
 ```bash
-# Criar ambiente virtual
-uv venv
-
-# Ativar no Linux/macOS:
-source .venv/bin/activate
-
-# Ativar no Windows:
-.venv\Scripts\activate
+uv sync
 ```
 
-### 3. Instalar Dependências
+Ou com **pip**:
 ```bash
-uv pip install -r requirements.txt
+python -m venv .venv
+source .venv/bin/activate  # Linux/macOS
+# ou
+.venv\Scripts\activate     # Windows
+
+pip install -r pyproject.toml
 ```
 
-### 4. Variáveis de Ambiente
+### 3. Variáveis de Ambiente
 Crie um arquivo `.env` na raiz do projeto com as configurações desejadas:
 
 ```env
@@ -142,15 +139,22 @@ ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 ```
 
-### 5. Planilha Modelo
+### 4. Planilha Modelo
 Verifique se o arquivo `modelo.xlsx` (template oficial da matriz) está presente no diretório raiz da aplicação.
 
-### 6. Executar o Servidor
+### 5. Executar o Servidor
 ```bash
+uv run python main.py
+# ou com ambiente ativado:
 python main.py
 ```
 
 A API estará disponível em `http://localhost:8000`.
+
+### 6. Credenciais de Acesso Padrão
+Para testes locais, utilize as credenciais abaixo na tela de login:
+* **Usuário:** `carmem`
+* **Senha:** `querida`
 
 ### 7. Documentação Interativa
 * **Swagger UI:** `http://localhost:8000/docs`
@@ -175,11 +179,15 @@ matriz-patrocinio/
 ├── schemas/                # Modelos de validação Pydantic
 │   ├── __init__.py
 │   └── planilha.py         # Schemas do formulário de entrada
+├── template/               # Arquivos estáticos de visualização
+│   └── index.html          # Interface Single Page (HTML5 + CSS3 + JS)
 ├── db/                     # Camada reservada para persistência (Banco de Dados)
 │   └── __init__.py
+├── modelo.xlsx             # Template da planilha oficial da Matriz COPASA
+├── pyproject.toml          # Definição do projeto e dependências
+├── uv.lock                 # Trava de versões das dependências (UV)
 ├── .env                    # Variáveis de ambiente locais
-├── .gitignore
-└── requirements.txt        # Dependências do projeto
+└── .gitignore
 ```
 
 ---
@@ -194,8 +202,8 @@ Autentica o usuário e retorna o token de acesso JWT.
 * **Headers:** `Content-Type: application/x-www-form-urlencoded`
 * **Body:**
   ```form-data
-  username=usuario
-  password=senha
+  username=carmem
+  password=querida
   ```
 * **Resposta (200 OK):**
   ```json
@@ -255,12 +263,13 @@ sequenceDiagram
 O front-end é uma solução *Single Page* leve e responsiva construída em HTML5/CSS3/JS puro:
 
 * **Dinâmico:** Campos renderizados automaticamente com base no esquema de perguntas.
+* **Cálculo Local de Pontuação:** Atualização dinâmica da pontuação total e classificação (de *Zero* a *Excelente*).
 * **Feedback ao usuário:** Barras de progresso e notificações *toast*.
-* **Cálculo Local:** Estimativa preliminar da pontuação antes do envio.
+* **Compatível com Live Server:** Detecção automática de origem da API (`http://localhost:8000`).
 
 ### Procedimento para Integração no WCM
-1. Copie o conteúdo de `index.html` para a página / widget desejado no WCM da COPASA.
-2. Atualize o endpoint da API na constante de configuração JavaScript do arquivo.
+1. Copie o conteúdo de `template/index.html` para a página / widget desejado no WCM da COPASA.
+2. Atualize o endpoint da API na constante de configuração JavaScript do arquivo, se necessário.
 3. Certifique-se de que a origem do WCM está autorizada no Middleware CORS da API FastAPI.
 
 ---
