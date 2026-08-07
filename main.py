@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, FileResponse
 import os
@@ -24,6 +24,10 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(planilha.router)
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    return Response(status_code=204)
 
 @app.post("/gerar", include_in_schema=False)
 async def gerar_alias(dados: PlanilhaData, current_user: dict = Depends(get_current_user)):
