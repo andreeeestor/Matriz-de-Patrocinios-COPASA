@@ -397,6 +397,69 @@
         display: flex;
         align-items: center;
         gap: 5px;
+      #mp-root .mp-label-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 2px;
+      }
+      #mp-root .mp-obs-toggle {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        color: #64748b;
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.68rem;
+        font-weight: 600;
+        padding: 2px 8px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: all 0.15s ease;
+        line-height: 1.4;
+      }
+      #mp-root .mp-obs-toggle svg {
+        width: 12px;
+        height: 12px;
+        flex-shrink: 0;
+      }
+      #mp-root .mp-obs-toggle:hover {
+        background: #f1f5f9;
+        color: #0ea5e9;
+        border-color: #cbd5e1;
+      }
+      #mp-root .mp-obs-toggle.mp-active,
+      #mp-root .mp-obs-toggle.mp-has-obs {
+        background: #e0f2fe;
+        color: #0284c7;
+        border-color: #7dd3fc;
+      }
+      #mp-root .mp-obs-wrapper {
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        margin-top: 0;
+      }
+      #mp-root .mp-obs-wrapper.mp-open {
+        max-height: 80px;
+        opacity: 1;
+        margin-top: 6px;
+      }
+      #mp-root .mp-obs-input {
+        font-size: 0.8rem !important;
+        padding: 8px 12px !important;
+        background: #f8fafc !important;
+        border-style: dashed !important;
+        border-color: #cbd5e1 !important;
+        border-radius: 8px !important;
+      }
+      #mp-root .mp-obs-input:focus {
+        background: #ffffff !important;
+        border-style: solid !important;
+        border-color: #0ea5e9 !important;
       }
       #mp-root .mp-required-dot {
         width: 4px;
@@ -720,6 +783,8 @@
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>',
           trendingUp:
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',
+          messageSquare:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
           chevronDown:
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
         };
@@ -883,25 +948,22 @@
             fields: [
               {
                 id: "valores_organizacionais_nota",
-                label: "Valores Organizacionais (Nota)",
+                label: "Valores Organizacionais",
                 type: "number",
                 step: "any",
               },
-              { id: "valores_organizacionais_obs", label: "Obs", type: "text" },
               {
                 id: "diversidade_inclusao_nota",
-                label: "Diversidade e Inclusão (Nota)",
+                label: "Diversidade e Inclusão",
                 type: "number",
                 step: "any",
               },
-              { id: "diversidade_inclusao_obs", label: "Obs", type: "text" },
               {
                 id: "sustentabilidade_nota",
-                label: "Sustentabilidade (Nota)",
+                label: "Sustentabilidade",
                 type: "number",
                 step: "any",
               },
-              { id: "sustentabilidade_obs", label: "Obs", type: "text" },
             ],
           },
           {
@@ -909,60 +971,52 @@
             fields: [
               {
                 id: "portfolio_nota",
-                label: "Portfolio (Nota)",
+                label: "Portfólio",
                 type: "number",
                 step: "any",
               },
-              { id: "portfolio_obs", label: "Obs", type: "text" },
               {
                 id: "experiencia_incentivos_nota",
-                label: "Experiência Incentivos (Nota)",
+                label: "Experiência Incentivos",
                 type: "number",
                 step: "any",
               },
-              { id: "experiencia_incentivos_obs", label: "Obs", type: "text" },
               {
                 id: "capacidade_tecnica_nota",
-                label: "Capacidade Técnica (Nota)",
+                label: "Capacidade Técnica",
                 type: "number",
                 step: "any",
               },
-              { id: "capacidade_tecnica_obs", label: "Obs", type: "text" },
               {
                 id: "governanca_nota",
-                label: "Governança (Nota)",
+                label: "Governança",
                 type: "number",
                 step: "any",
               },
-              { id: "governanca_obs", label: "Obs", type: "text" },
               {
                 id: "recursos_humanos_nota",
-                label: "Recursos Humanos (Nota)",
+                label: "Recursos Humanos",
                 type: "number",
                 step: "any",
               },
-              { id: "recursos_humanos_obs", label: "Obs", type: "text" },
               {
                 id: "recursos_financeiros_nota",
-                label: "Recursos Financeiros (Nota)",
+                label: "Recursos Financeiros",
                 type: "number",
                 step: "any",
               },
-              { id: "recursos_financeiros_obs", label: "Obs", type: "text" },
               {
                 id: "experiencia_resultados_nota",
-                label: "Experiência e Resultados (Nota)",
+                label: "Experiência e Resultados",
                 type: "number",
                 step: "any",
               },
-              { id: "experiencia_resultados_obs", label: "Obs", type: "text" },
               {
                 id: "parcerias_nota",
-                label: "Parcerias (Nota)",
+                label: "Parcerias",
                 type: "number",
                 step: "any",
               },
-              { id: "parcerias_obs", label: "Obs", type: "text" },
             ],
           },
           {
@@ -970,96 +1024,76 @@
             fields: [
               {
                 id: "beneficiarios_diretos_nota",
-                label: "Beneficiários Diretos (Nota)",
+                label: "Beneficiários Diretos",
                 type: "number",
                 step: "any",
               },
-              { id: "beneficiarios_diretos_obs", label: "Obs", type: "text" },
               {
                 id: "beneficiarios_indiretos_nota",
-                label: "Beneficiários Indiretos (Nota)",
+                label: "Beneficiários Indiretos",
                 type: "number",
                 step: "any",
               },
-              { id: "beneficiarios_indiretos_obs", label: "Obs", type: "text" },
               {
                 id: "educacao_nota",
-                label: "Educação (Nota)",
+                label: "Educação",
                 type: "number",
                 step: "any",
               },
-              { id: "educacao_obs", label: "Obs", type: "text" },
               {
                 id: "saude_nota",
-                label: "Saúde (Nota)",
+                label: "Saúde",
                 type: "number",
                 step: "any",
               },
-              { id: "saude_obs", label: "Obs", type: "text" },
               {
                 id: "inclusao_nota",
-                label: "Inclusão (Nota)",
+                label: "Inclusão",
                 type: "number",
                 step: "any",
               },
-              { id: "inclusao_obs", label: "Obs", type: "text" },
               {
                 id: "esg_nota",
-                label: "ESG (Nota)",
+                label: "ESG",
                 type: "number",
                 step: "any",
               },
-              { id: "esg_obs", label: "Obs", type: "text" },
               {
                 id: "diferencial_artistico_nota",
-                label: "Diferencial Artístico/Cultural (Nota)",
+                label: "Diferencial Artístico/Cultural",
                 type: "number",
                 step: "any",
               },
-              { id: "diferencial_artistico_obs", label: "Obs", type: "text" },
               {
                 id: "diferencial_social_nota",
-                label: "Diferencial Social/Ambiental (Nota)",
+                label: "Diferencial Social/Ambiental",
                 type: "number",
                 step: "any",
               },
-              { id: "diferencial_social_obs", label: "Obs", type: "text" },
               {
                 id: "diferencial_originalidade_nota",
-                label: "Diferencial de Originalidade (Nota)",
+                label: "Diferencial de Originalidade",
                 type: "number",
                 step: "any",
-              },
-              {
-                id: "diferencial_originalidade_obs",
-                label: "Obs",
-                type: "text",
               },
               {
                 id: "diferencial_tecnico_nota",
-                label: "Diferencial Técnico-Científico (Nota)",
+                label: "Diferencial Técnico-Científico",
                 type: "number",
                 step: "any",
               },
-              { id: "diferencial_tecnico_obs", label: "Obs", type: "text" },
               {
                 id: "diferencial_relacionamento_nota",
-                label: "Diferencial de Relacionamento (Nota)",
+                label: "Diferencial de Relacionamento",
                 type: "number",
                 step: "any",
-              },
-              {
-                id: "diferencial_relacionamento_obs",
-                label: "Obs",
-                type: "text",
               },
               {
                 id: "interesse_coletivo_nota",
-                label: "Interesse Coletivo (Nota)",
+                label: "Interesse Coletivo",
                 type: "number",
                 step: "any",
               },
-              { id: "interesse_coletivo_obs", label: "Obs", type: "text" },
             ],
           },
           {
@@ -1067,74 +1101,64 @@
             fields: [
               {
                 id: "plano_comunicacao_nota",
-                label: "Plano de Comunicação (Nota)",
+                label: "Plano de Comunicação",
                 type: "number",
                 step: "any",
               },
-              { id: "plano_comunicacao_obs", label: "Obs", type: "text" },
               {
                 id: "redes_sociais_nota",
-                label: "Redes Sociais (Nota)",
+                label: "Redes Sociais",
                 type: "number",
                 step: "any",
               },
-              { id: "redes_sociais_obs", label: "Obs", type: "text" },
               {
                 id: "monitoramento_nota",
-                label: "Monitoramento (Nota)",
+                label: "Monitoramento",
                 type: "number",
                 step: "any",
               },
-              { id: "monitoramento_obs", label: "Obs", type: "text" },
               {
                 id: "conteudo_institucional_nota",
-                label: "Conteúdo Institucional (Nota)",
+                label: "Conteúdo Institucional",
                 type: "number",
                 step: "any",
               },
-              { id: "conteudo_institucional_obs", label: "Obs", type: "text" },
               {
                 id: "ativacoes_marca_nota",
-                label: "Ativações da Marca (Nota)",
+                label: "Ativações da Marca",
                 type: "number",
                 step: "any",
               },
-              { id: "ativacoes_marca_obs", label: "Obs", type: "text" },
               {
                 id: "direitos_imagem_nota",
-                label: "Direitos de Imagem (Nota)",
+                label: "Direitos de Imagem",
                 type: "number",
                 step: "any",
               },
-              { id: "direitos_imagem_obs", label: "Obs", type: "text" },
               {
                 id: "contrapartida_imagem_nota",
-                label: "Contrapartida de Imagem (Nota)",
+                label: "Contrapartida de Imagem",
                 type: "number",
                 step: "any",
               },
-              { id: "contrapartida_imagem_obs", label: "Obs", type: "text" },
               {
                 id: "site_oficial_nota",
-                label: "Site Oficial (Nota)",
+                label: "Site Oficial",
                 type: "number",
                 step: "any",
               },
-              { id: "site_oficial_obs", label: "Obs", type: "text" },
               {
                 id: "exibicao_video_nota",
-                label: "Exibição de Vídeo (Nota)",
+                label: "Exibição de Vídeo",
                 type: "number",
                 step: "any",
               },
-              { id: "exibicao_video_obs", label: "Obs", type: "text" },
               {
                 id: "citacao_releases_nota",
-                label: "Citação nos Releases (Nota)",
+                label: "Citação nos Releases",
                 type: "number",
                 step: "any",
               },
-              { id: "citacao_releases_obs", label: "Obs", type: "text" },
             ],
           },
           {
@@ -1142,29 +1166,22 @@
             fields: [
               {
                 id: "voluntariado_corporativo_nota",
-                label: "Voluntariado Corporativo (Nota)",
+                label: "Voluntariado Corporativo",
                 type: "number",
                 step: "any",
-              },
-              {
-                id: "voluntariado_corporativo_obs",
-                label: "Obs",
-                type: "text",
               },
               {
                 id: "datas_comemorativas_nota",
-                label: "Datas Comemorativas (Nota)",
+                label: "Datas Comemorativas",
                 type: "number",
                 step: "any",
               },
-              { id: "datas_comemorativas_obs", label: "Obs", type: "text" },
               {
                 id: "engajamento_comunitario_nota",
-                label: "Engajamento Comunitário (Nota)",
+                label: "Engajamento Comunitário",
                 type: "number",
                 step: "any",
               },
-              { id: "engajamento_comunitario_obs", label: "Obs", type: "text" },
             ],
           },
           {
@@ -1207,25 +1224,22 @@
             fields: [
               {
                 id: "captacao_nota",
-                label: "Captação — % já captado (Nota)",
+                label: "Captação — % já captado",
                 type: "number",
                 step: "any",
               },
-              { id: "captacao_obs", label: "Obs", type: "text" },
               {
                 id: "execucao_garantida_nota",
-                label: "Execução Garantida (Nota)",
+                label: "Execução Garantida",
                 type: "number",
                 step: "any",
               },
-              { id: "execucao_garantida_obs", label: "Obs", type: "text" },
               {
                 id: "cotas_nota",
-                label: "Cotas (Nota)",
+                label: "Cotas",
                 type: "number",
                 step: "any",
               },
-              { id: "cotas_obs", label: "Obs", type: "text" },
             ],
           },
         ];
@@ -1273,12 +1287,34 @@
           section.fields.forEach(function (field) {
             var group = document.createElement("div");
             group.className = "mp-field-group";
+
+            var labelRow = document.createElement("div");
+            labelRow.className = "mp-label-row";
+
             var label = document.createElement("label");
             label.setAttribute("for", field.id);
             label.innerHTML =
               field.label +
               (field.required ? ' <span class="mp-required-dot"></span>' : "");
-            group.appendChild(label);
+            labelRow.appendChild(label);
+
+            var obsId = field.id.endsWith("_nota")
+              ? field.id.replace("_nota", "_obs")
+              : null;
+            var obsBtn = null;
+            var obsWrapper = null;
+            var obsInput = null;
+
+            if (obsId) {
+              obsBtn = document.createElement("button");
+              obsBtn.type = "button";
+              obsBtn.className = "mp-obs-toggle";
+              obsBtn.innerHTML = ICONS.messageSquare + " <span>+ Obs</span>";
+              obsBtn.title = "Adicionar observação sobre este critério";
+              labelRow.appendChild(obsBtn);
+            }
+
+            group.appendChild(labelRow);
 
             var input;
             if (field.type === "textarea") {
@@ -1304,6 +1340,39 @@
             });
 
             group.appendChild(input);
+
+            if (obsId) {
+              obsWrapper = document.createElement("div");
+              obsWrapper.className = "mp-obs-wrapper";
+
+              obsInput = document.createElement("input");
+              obsInput.type = "text";
+              obsInput.id = obsId;
+              obsInput.name = obsId;
+              obsInput.className = "mp-obs-input";
+              obsInput.placeholder = "Observação sobre " + field.label + "...";
+
+              obsInput.addEventListener("input", function () {
+                if (this.value.trim() !== "") {
+                  obsBtn.classList.add("mp-has-obs");
+                } else {
+                  obsBtn.classList.remove("mp-has-obs");
+                }
+              });
+
+              obsBtn.addEventListener("click", function (e) {
+                e.preventDefault();
+                var isExpanded = obsWrapper.classList.toggle("mp-open");
+                obsBtn.classList.toggle("mp-active", isExpanded);
+                if (isExpanded) {
+                  obsInput.focus();
+                }
+              });
+
+              obsWrapper.appendChild(obsInput);
+              group.appendChild(obsWrapper);
+            }
+
             grid.appendChild(group);
           });
 
@@ -1449,6 +1518,12 @@
               var parent = inp.closest(".mp-field-group");
               if (parent) parent.classList.remove("mp-has-value");
             }
+          });
+          form.querySelectorAll(".mp-obs-wrapper").forEach(function (w) {
+            w.classList.remove("mp-open");
+          });
+          form.querySelectorAll(".mp-obs-toggle").forEach(function (btn) {
+            btn.classList.remove("mp-active", "mp-has-obs");
           });
           checkForm();
           atualizarScore();
