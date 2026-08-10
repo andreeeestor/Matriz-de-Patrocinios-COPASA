@@ -74,16 +74,22 @@ flowchart TB
 | :--- | :---: | :--- |
 | **FastAPI** | `^0.141` | Framework web assíncrono de alta performance |
 | **Uvicorn** | `^0.52` | Servidor de aplicação ASGI |
+| **HTTPX** | `^0.28` | Cliente HTTP assíncrono para comunicação com a API do Ollama |
 | **Python-JOSE** | `^3.5` | Implementação e validação de tokens JWT |
 | **Passlib** | `^1.7` | Hashing seguro de senhas (PBKDF2-SHA256) |
-| **OpenPyXL** | `^3.1` | Leitura, escrita e manipulação de modelos Excel |
+| **OpenPyXL** | `^3.1` | Leitura, escrita e extração de dados de modelos Excel |
 | **Pydantic-Settings** | `^2.14` | Gerenciamento e validação de variáveis de ambiente |
+
+### Inteligência Artificial Local
+| Tecnologia | Finalidade |
+| :--- | :--- |
+| **Ollama** | Servidor local/remoto de LLMs (ex: `llama3`, `qwen2.5`, `mistral`) para diagnóstico de propostas |
 
 ### Front-end
 | Tecnologia | Finalidade |
 | :--- | :--- |
-| **HTML5 / CSS3** | Estrutura semântica, responsividade e componentes visuais |
-| **JavaScript (ES6+)** | Lógica de preenchimento, validação em tempo real e consumo da API |
+| **HTML5 / CSS3** | Estrutura semântica, responsividade e menu de navegação estilo *Segmented Control* |
+| **JavaScript (ES6+)** | Lógica de formulário, calculador dinâmico de pontuação e upload para análise via IA |
 
 ### Gerenciamento de Dependências
 | Ferramenta | Finalidade |
@@ -96,6 +102,7 @@ flowchart TB
 
 * **Python 3.12** ou superior
 * **UV** (recomendado) ou `pip`
+* **Ollama** instalado e executando (`ollama run llama3`)
 * **Git**
 
 ### Instalando o UV (recomendado)
@@ -137,12 +144,20 @@ Crie um arquivo `.env` na raiz do projeto com as configurações desejadas:
 SECRET_KEY=sua_chave_secreta_aqui
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=llama3
 ```
 
-### 4. Planilha Modelo
+### 4. Executar o Servidor Ollama (para recursos de IA)
+Certifique-se de que o Ollama está rodando localmente com o modelo desejado:
+```bash
+ollama run llama3
+```
+
+### 5. Planilha Modelo
 Verifique se o arquivo `modelo.xlsx` (template oficial da matriz) está presente no diretório raiz da aplicação.
 
-### 5. Executar o Servidor
+### 6. Executar o Servidor FastAPI
 ```bash
 uv run python main.py
 # ou com ambiente ativado:
@@ -151,12 +166,12 @@ python main.py
 
 A API estará disponível em `http://localhost:8000`.
 
-### 6. Credenciais de Acesso Padrão
+### 7. Credenciais de Acesso Padrão
 Para testes locais, utilize as credenciais abaixo na tela de login:
 * **Usuário:** `carmem`
 * **Senha:** `querida`
 
-### 7. Documentação Interativa
+### 8. Documentação Interativa
 * **Swagger UI:** `http://localhost:8000/docs`
 * **ReDoc:** `http://localhost:8000/redoc`
 
@@ -169,18 +184,20 @@ matriz-patrocinio/
 ├── main.py                 # Ponto de entrada da aplicação FastAPI
 ├── core/                   # Módulos centrais da aplicação
 │   ├── __init__.py
+│   ├── ai.py               # Leitura de planilhas .xlsx e integração HTTP com Ollama LLM
 │   ├── auth.py             # Lógica de segurança e autenticação JWT
-│   ├── config.py           # Carregamento de variáveis de ambiente
+│   ├── config.py           # Carregamento de variáveis de ambiente (Ollama, Secret Key)
 │   └── planilha.py         # Processamento e geração da planilha Excel
 ├── routers/                # Controladores / Endpoints da API
 │   ├── __init__.py
+│   ├── ai.py               # Endpoints de status da IA e análise inteligente de planilhas
 │   ├── auth.py             # Endpoints de login e perfil
 │   └── planilha.py         # Endpoint para geração de relatórios
 ├── schemas/                # Modelos de validação Pydantic
 │   ├── __init__.py
 │   └── planilha.py         # Schemas do formulário de entrada
 ├── template/               # Arquivos estáticos de visualização
-│   └── index.html          # Interface Single Page (HTML5 + CSS3 + JS)
+│   └── index.html          # Interface Single Page com navegação Segmented Control por Abas
 ├── db/                     # Camada reservada para persistência (Banco de Dados)
 │   └── __init__.py
 ├── modelo.xlsx             # Template da planilha oficial da Matriz COPASA
@@ -230,6 +247,56 @@ Gera a planilha Excel preenchida a partir das respostas submetidas.
   * `Content-Type: application/json`
 * **Resposta (200 OK):**
   * Retorno do arquivo binário `.xlsx` (`Matriz_Patrocinios_Preenchida.xlsx`) para download.
+
+---
+
+### 🤖 Inteligência Artificial (Ollama)
+
+#### `GET /ai/status`
+Verifica se o servidor Ollama está ativo e lista os modelos disponíveis.
+
+* **Headers:** `Authorization: Bearer <seu_token_jwt>`
+* **Resposta (200 OK):**
+  ```json
+  {
+    "status": "online",
+    "ollama_url": "http://localhost:11434",
+    "modelo_configurado": "llama3",
+    "modelos_disponiveis": ["llama3:latest", "qwen2.5:latest"]
+  }
+  ```
+
+#### `POST /ai/analisar-planilha`
+Recebe o upload de um arquivo `.xlsx` preenchido e retorna um diagnóstico executivo gerado pela IA com recomendações de como aumentar a pontuação.
+
+* **Headers:** `Authorization: Bearer <seu_token_jwt>`
+* **Body:** `multipart/form-data` contendo `file: <arquivo.xlsx>`
+* **Resposta (200 OK):**
+  ```json
+  {
+    "sucesso": true,
+    "modelo_usado": "llama3",
+    "dados_extraidos": {
+      "nome_projeto": "Festival Cultural",
+      "proponente": "Associação Arte",
+      "pontuacao_total_obtida": 450.0,
+      "pontuacao_maxima_possivel": 940.0
+    },
+    "analise_ia": {
+      "resumo_executivo": "O projeto apresenta boa aderência aos valores organizacionais...",
+      "pontos_fortes": ["Alta capacidade técnica comprovada", "Bom plano de sustentabilidade"],
+      "oportunidades_melhoria": [
+        {
+          "criterio": "voluntariado_corporativo_nota",
+          "nota_atual": 5,
+          "nota_maxima": 15,
+          "recomendacao": "Detalhar ações de engajamento dos colaboradores da COPASA no evento."
+        }
+      ],
+      "conclusao": "Proposta viável com alto potencial de otimização de nota."
+    }
+  }
+  ```
 
 ---
 
