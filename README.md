@@ -258,19 +258,34 @@ sequenceDiagram
 
 ---
 
-## 🖥️ Front-end & Integração WCM
+## 🌐 Hospedagem no Render & Uptime
+
+A API backend está hospedada no serviço **Render**:
+* **URL de Produção:** `https://matriz-patrocinios-copasa.onrender.com`
+* **Documentação Swagger (Produção):** `https://matriz-patrocinios-copasa.onrender.com/docs`
+
+### Como Evitar o "Sleep" do Render (Free Tier)
+O plano gratuito do Render desliga a instância após 15 minutos sem uso. Para manter o serviço 100% ativo:
+1. Cadastre-se no [UptimeRobot](https://uptimerobot.com/).
+2. Crie um monitor do tipo **HTTP(s)** apontando para `https://matriz-patrocinios-copasa.onrender.com/`.
+3. Defina o intervalo de monitoramento para **5 minutos**.
+
+---
+
+## 🖥️ Front-end & Integração WCM HCL
 
 O front-end é uma solução *Single Page* leve e responsiva construída em HTML5/CSS3/JS puro:
 
 * **Dinâmico:** Campos renderizados automaticamente com base no esquema de perguntas.
 * **Cálculo Local de Pontuação:** Atualização dinâmica da pontuação total e classificação (de *Zero* a *Excelente*).
 * **Feedback ao usuário:** Barras de progresso e notificações *toast*.
-* **Compatível com Live Server:** Detecção automática de origem da API (`http://localhost:8000`).
+* **Suporte Híbrido (Local / Produção):** O código detecta automaticamente o ambiente (`localhost` vs servidor de produção no Render).
 
-### Procedimento para Integração no WCM
-1. Copie o conteúdo de `template/index.html` para a página / widget desejado no WCM da COPASA.
-2. Atualize o endpoint da API na constante de configuração JavaScript do arquivo, se necessário.
-3. Certifique-se de que a origem do WCM está autorizada no Middleware CORS da API FastAPI.
+### Procedimento para Embutir no WCM HCL da COPASA
+1. Abra o arquivo `template/index.html`.
+2. Copie todo o código HTML contido no arquivo.
+3. No portal **WCM HCL**, adicione um componente do tipo **HTML Element** ou **Custom Script Component** e cole o código.
+4. O script já está pré-configurado para comunicar com o backend hospedado em `https://matriz-patrocinios-copasa.onrender.com`.
 
 ---
 
