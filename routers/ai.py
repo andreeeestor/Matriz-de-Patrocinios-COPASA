@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, status
 import httpx
-from core.ai import extrair_dados_planilha, analisar_planilha_com_ollama
+from core.ai import extrair_dados_planilha, analisar_planilha_com_groq
 from core.auth import get_current_user
 from core.config import get_settings
 
@@ -8,29 +8,33 @@ settings = get_settings()
 router = APIRouter(prefix="/ai", tags=["Inteligência Artificial"])
 
 @router.get("/status")
-async def check_ollama_status(current_user: dict = Depends(get_current_user)):
-    """Verifica a conectividade com o servidor Ollama e lista os modelos disponíveis."""
+async def check_groq_status(current_user: dict = Depends(get_current_user)):
+    """Verifica se a GROQ_API_KEY está configurada e se a API do Groq está respondendo."""
+    if not settings.GROQ_API_KEY:
+        return {
+            "status": "offline",
+            "erro": "GROQ_API_KEY não foi informada."
+        }
+
     try:
+        headers = {"Authorization": f"Bearer {settings.GROQ_API_KEY}"}
         async with httpx.AsyncClient(timeout=5.0) as client:
-            res = await client.get(f"{settings.OLLAMA_BASE_URL}/api/tags")
+            res = await client.get("https://api.groq.com/openai/v1/models", headers=headers)
             if res.status_code == 200:
-                models_info = res.json().get("models", [])
-                model_names = [m.get("name") for m in models_info]
                 return {
                     "status": "online",
-                    "ollama_url": settings.OLLAMA_BASE_URL,
-                    "modelo_configurado": settings.OLLAMA_MODEL,
-                    "modelos_disponiveis": model_names
+                    "provedor": "Groq Cloud LPU",
+                    "modelo_configurado": settings.GROQ_MODEL
                 }
             else:
                 return {
                     "status": "offline",
-                    "erro": f"Servidor Ollama retornou HTTP {res.status_code}"
+                    "erro": f"Groq API retornou HTTP {res.status_code}"
                 }
     except Exception as e:
         return {
             "status": "offline",
-            "erro": f"Não foi possível conectar ao Ollama em {settings.OLLAMA_BASE_URL}: {str(e)}"
+            "erro": f"Não foi possível conectar à Groq API: {str(e)}"
         }
 
 @router.post("/analisar-planilha")
@@ -38,7 +42,7 @@ async def analisar_planilha_endpoint(
     file: UploadFile = File(...),
     current_user: dict = Depends(get_current_user)
 ):
-    """Recebe um arquivo .xlsx preenchido e retorna uma análise da IA com sugestões de melhoria de pontuação."""
+    """Recebe um arquivo .xlsx preenchido e retorna uma análise da IA Groq com sugestões de melhoria."""
     if not file.filename.endswith(".xlsx"):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -48,7 +52,7 @@ async def analisar_planilha_endpoint(
     try:
         contents = await file.read()
         dados_planilha = extrair_dados_planilha(contents)
-        resultado = await analisar_planilha_com_ollama(dados_planilha)
+        resultado = await analisar_planilha_com_groq(dados_planilha)
         
         if not resultado.get("sucesso"):
             raise HTTPException(

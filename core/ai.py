@@ -88,9 +88,15 @@ def extrair_dados_planilha(file_bytes: bytes) -> dict:
         "detalhes_criterios": notas_criterios,
     }
 
-async def analisar_planilha_com_ollama(dados_planilha: dict) -> dict:
-    """Envia o diagnóstico de pontuação para o Ollama gerar recomendações inteligentes em JSON."""
+async def analisar_planilha_com_groq(dados_planilha: dict) -> dict:
+    """Envia o diagnóstico de pontuação para a API do Groq gerar recomendações inteligentes em JSON."""
     
+    if not settings.GROQ_API_KEY:
+        return {
+            "sucesso": False,
+            "erro": "GROQ_API_KEY não foi configurada no ambiente (.env ou variáveis do servidor)."
+        }
+
     system_prompt = (
         "Você é um consultor especialista em avaliação de projetos e patrocínios da COPASA. "
         "Sua tarefa é analisar os dados de pontuação extraídos de uma planilha de avaliação e gerar um diagnóstico executivo "
@@ -113,23 +119,33 @@ async def analisar_planilha_com_ollama(dados_planilha: dict) -> dict:
 
     user_prompt = f"Dados do Projeto Avaliado:\n{json.dumps(dados_planilha, ensure_ascii=False, indent=2)}"
 
+    headers = {
+        "Authorization": f"Bearer {settings.GROQ_API_KEY}",
+        "Content-Type": "application/json"
+    }
+
     payload = {
-        "model": settings.OLLAMA_MODEL,
-        "prompt": f"{system_prompt}\n\n{user_prompt}",
-        "stream": False,
-        "format": "json"
+        "model": settings.GROQ_MODEL,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ],
+        "response_format": {"type": "json_object"},
+        "temperature": 0.3
     }
 
     try:
-        async with httpx.AsyncClient(timeout=60.0) as client:
+        async with httpx.AsyncClient(timeout=30.0) as client:
             res = await client.post(
-                f"{settings.OLLAMA_BASE_URL}/api/generate",
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers=headers,
                 json=payload
             )
 
             if res.status_code == 200:
                 res_data = res.json()
-                response_text = res_data.get("response", "{}")
+                choices = res_data.get("choices", [])
+                response_text = choices[0]["message"]["content"] if choices else "{}"
                 try:
                     analise_json = json.loads(response_text)
                 except json.JSONDecodeError:
@@ -142,7 +158,7 @@ async def analisar_planilha_com_ollama(dados_planilha: dict) -> dict:
                 
                 return {
                     "sucesso": True,
-                    "modelo_usado": settings.OLLAMA_MODEL,
+                    "modelo_usado": settings.GROQ_MODEL,
                     "dados_extraidos": {
                         "nome_projeto": dados_planilha["nome_projeto"],
                         "proponente": dados_planilha["proponente"],
@@ -154,10 +170,10 @@ async def analisar_planilha_com_ollama(dados_planilha: dict) -> dict:
             else:
                 return {
                     "sucesso": False,
-                    "erro": f"Ollama respondeu com status {res.status_code}: {res.text}"
+                    "erro": f"API do Groq respondeu com status {res.status_code}: {res.text}"
                 }
     except Exception as e:
         return {
             "sucesso": False,
-            "erro": f"Erro de conexão com o servidor Ollama ({settings.OLLAMA_BASE_URL}): {str(e)}"
+            "erro": f"Erro de conexão com a API do Groq: {str(e)}"
         }

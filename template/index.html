@@ -786,7 +786,7 @@
               <line x1="8" y1="16" x2="8" y2="16"></line>
               <line x1="16" y1="16" x2="16" y2="16"></line>
             </svg>
-            <span>Analisador IA (Ollama)</span>
+            <span>Analisador IA (Groq)</span>
           </button>
         </div>
 
@@ -836,10 +836,10 @@
             </svg>
             Análise Inteligente de Planilha (.xlsx)
           </h2>
-          <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Faça o upload de uma planilha preenchida da Matriz para que a IA (Ollama) identifique pontos fracos, gaps de pontuação e sugira melhorias.</p>
+          <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Faça o upload de uma planilha preenchida da Matriz para que a IA (Groq Cloud) identifique pontos fracos, gaps de pontuação e sugira melhorias.</p>
 
           <div id="mpAiStatusBadge" style="margin-bottom: 16px; padding: 10px 14px; border-radius: 8px; font-size: 0.85rem; background: #f1f5f9; color: #475569; display: flex; align-items: center; gap: 8px;">
-            Verificando conexão com o servidor Ollama...
+            Verificando conexão com a API Groq...
           </div>
 
           <div style="border: 2px dashed #cbd5e1; border-radius: 10px; padding: 32px; text-align: center; background: #f8fafc; cursor: pointer;" id="mpDropZone">
@@ -1820,11 +1820,11 @@
           mpAiSection.style.display = "block";
           tabAiBtn.classList.add("mp-active");
           tabFormBtn.classList.remove("mp-active");
-          checkOllamaStatus();
+          checkGroqStatus();
         });
 
-        // Verificação do Ollama
-        async function checkOllamaStatus() {
+        // Verificação da API Groq
+        async function checkGroqStatus() {
           var badge = document.getElementById("mpAiStatusBadge");
           var token = sessionStorage.getItem("mp_token");
           try {
@@ -1835,11 +1835,11 @@
             if (data.status === "online") {
               badge.style.background = "#ecfdf5";
               badge.style.color = "#047857";
-              badge.innerHTML = "Servidor Ollama Conectado (" + data.modelo_configurado + ") · Modelos: " + (data.modelos_disponiveis.join(", ") || "Nenhum detectado");
+              badge.innerHTML = "Groq Cloud API Conectada (" + data.modelo_configurado + ") · Provedor: " + data.provedor;
             } else {
               badge.style.background = "#fff1f2";
               badge.style.color = "#b91c1c";
-              badge.innerHTML = "Ollama Indisponível (" + data.erro + ")";
+              badge.innerHTML = "Groq API Indisponível (" + data.erro + ")";
             }
           } catch (e) {
             badge.style.background = "#fff1f2";

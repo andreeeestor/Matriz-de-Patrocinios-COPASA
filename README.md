@@ -140,24 +140,21 @@ pip install -r pyproject.toml
 ### 3. Variáveis de Ambiente
 Crie um arquivo `.env` na raiz do projeto com as configurações desejadas:
 
+### 3. Variáveis de Ambiente
+Crie um arquivo `.env` na raiz do projeto com as configurações desejadas:
+
 ```env
 SECRET_KEY=sua_chave_secreta_aqui
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
-OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=llama3
+GROQ_API_KEY=gsk_sua_chave_groq_aqui
+GROQ_MODEL=llama-3.1-8b-instant
 ```
 
-### 4. Executar o Servidor Ollama (para recursos de IA)
-Certifique-se de que o Ollama está rodando localmente com o modelo desejado:
-```bash
-ollama run llama3
-```
-
-### 5. Planilha Modelo
+### 4. Planilha Modelo
 Verifique se o arquivo `modelo.xlsx` (template oficial da matriz) está presente no diretório raiz da aplicação.
 
-### 6. Executar o Servidor FastAPI
+### 5. Executar o Servidor FastAPI
 ```bash
 uv run python main.py
 # ou com ambiente ativado:
@@ -166,12 +163,12 @@ python main.py
 
 A API estará disponível em `http://localhost:8000`.
 
-### 7. Credenciais de Acesso Padrão
+### 6. Credenciais de Acesso Padrão
 Para testes locais, utilize as credenciais abaixo na tela de login:
 * **Usuário:** `carmem`
 * **Senha:** `querida`
 
-### 8. Documentação Interativa
+### 7. Documentação Interativa
 * **Swagger UI:** `http://localhost:8000/docs`
 * **ReDoc:** `http://localhost:8000/redoc`
 
@@ -184,13 +181,13 @@ matriz-patrocinio/
 ├── main.py                 # Ponto de entrada da aplicação FastAPI
 ├── core/                   # Módulos centrais da aplicação
 │   ├── __init__.py
-│   ├── ai.py               # Leitura de planilhas .xlsx e integração HTTP com Ollama LLM
+│   ├── ai.py               # Leitura de planilhas .xlsx e integração com a Groq Cloud LPU API
 │   ├── auth.py             # Lógica de segurança e autenticação JWT
-│   ├── config.py           # Carregamento de variáveis de ambiente (Ollama, Secret Key)
+│   ├── config.py           # Carregamento de variáveis de ambiente (Groq API, Secret Key)
 │   └── planilha.py         # Processamento e geração da planilha Excel
 ├── routers/                # Controladores / Endpoints da API
 │   ├── __init__.py
-│   ├── ai.py               # Endpoints de status da IA e análise inteligente de planilhas
+│   ├── ai.py               # Endpoints de status da Groq API e análise inteligente de planilhas
 │   ├── auth.py             # Endpoints de login e perfil
 │   └── planilha.py         # Endpoint para geração de relatórios
 ├── schemas/                # Modelos de validação Pydantic
@@ -250,14 +247,20 @@ Gera a planilha Excel preenchida a partir das respostas submetidas.
 
 ---
 
-### 🤖 Inteligência Artificial (Ollama)
+### 🤖 Inteligência Artificial (Groq Cloud)
 
 #### `GET /ai/status`
-Verifica se o servidor Ollama está ativo e lista os modelos disponíveis.
+Verifica se a `GROQ_API_KEY` está válida e se a API do Groq está online.
 
 * **Headers:** `Authorization: Bearer <seu_token_jwt>`
 * **Resposta (200 OK):**
   ```json
+  {
+    "status": "online",
+    "provedor": "Groq Cloud LPU",
+    "modelo_configurado": "llama-3.1-8b-instant"
+  }
+  ```
   {
     "status": "online",
     "ollama_url": "http://localhost:11434",
