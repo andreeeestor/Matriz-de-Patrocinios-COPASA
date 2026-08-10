@@ -1557,7 +1557,10 @@
           "@keyframes mp-ripple { from { width:0;height:0;opacity:1; } to { width:280px;height:280px;opacity:0; } }";
         document.head.appendChild(style);
 
-        var API_BASE = (window.location.protocol === "file:" || window.location.port !== "8000") ? "http://localhost:8000" : "";
+        var RENDER_URL = "https://matriz-patrocinios-copasa.onrender.com";
+        var API_BASE = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") 
+          ? (window.location.port === "8000" ? "" : "http://localhost:8000") 
+          : RENDER_URL;
 
         gerarBtn.addEventListener("click", async function () {
           if (!this.classList.contains("mp-enabled")) return;
