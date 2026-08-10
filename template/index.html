@@ -627,11 +627,12 @@
         margin-bottom: 28px;
       }
       #mp-root .mp-tab-btn {
-        display: inline-flex;
+        display: flex;
         align-items: center;
         gap: 10px;
         padding: 12px 24px;
-        border-radius: 8px 8px 0 0;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
         border: 2px solid #cbd5e1;
         border-bottom: none;
         background: #f1f5f9;
@@ -639,7 +640,8 @@
         font-size: 1.05rem;
         font-weight: 600;
         cursor: pointer;
-        margin-bottom: -3px;
+        position: relative;
+        bottom: -3px;
         transition: all 0.2s ease;
       }
       #mp-root .mp-tab-btn:hover {
@@ -652,7 +654,7 @@
         border-color: #0284c7;
         border-bottom: 3px solid #ffffff;
         font-weight: 700;
-        box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
       }
       #mp-root .mp-tab-btn svg {
         width: 20px;
