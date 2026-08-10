@@ -7,11 +7,11 @@ from .planilha import CELL_MAP
 
 settings = get_settings()
 
-# Notas máximas estimadas por critério para identificação de gap
 MAX_SCORES = {
-    "valores_organizacionais_nota": 20,
+    "valores_organizacionais_nota": 20,  # Valor aproximado (não tem na planilha)
     "diversidade_inclusao_nota": 20,
     "sustentabilidade_nota": 20,
+    
     "portfolio_nota": 25,
     "experiencia_incentivos_nota": 25,
     "capacidade_tecnica_nota": 25,
@@ -20,34 +20,38 @@ MAX_SCORES = {
     "recursos_financeiros_nota": 25,
     "experiencia_resultados_nota": 25,
     "parcerias_nota": 25,
-    "beneficiarios_diretos_nota": 30,
-    "beneficiarios_indiretos_nota": 30,
-    "educacao_nota": 30,
-    "saude_nota": 30,
-    "inclusao_nota": 30,
-    "esg_nota": 30,
-    "diferencial_artistico_nota": 30,
-    "diferencial_social_nota": 30,
-    "diferencial_originalidade_nota": 30,
-    "diferencial_tecnico_nota": 30,
-    "diferencial_relacionamento_nota": 30,
-    "interesse_coletivo_nota": 30,
-    "plano_comunicacao_nota": 20,
-    "redes_sociais_nota": 20,
-    "monitoramento_nota": 20,
-    "conteudo_institucional_nota": 20,
-    "ativacoes_marca_nota": 20,
-    "direitos_imagem_nota": 20,
-    "contrapartida_imagem_nota": 20,
-    "site_oficial_nota": 20,
-    "exibicao_video_nota": 20,
-    "citacao_releases_nota": 20,
-    "voluntariado_corporativo_nota": 15,
-    "datas_comemorativas_nota": 15,
-    "engajamento_comunitario_nota": 15,
-    "captacao_nota": 15,
-    "execucao_garantida_nota": 15,
-    "cotas_nota": 15,
+    
+    "beneficiarios_diretos_nota": 36,  # CORRIGIDO
+    "beneficiarios_indiretos_nota": 36,  # CORRIGIDO
+    "educacao_nota": 36,  # CORRIGIDO
+    "saude_nota": 36,  # CORRIGIDO
+    "inclusao_nota": 36,  # CORRIGIDO
+    "esg_nota": 36,  # CORRIGIDO
+    "diferencial_artistico_nota": 36,
+    "diferencial_social_nota": 36,
+    "diferencial_originalidade_nota": 36,
+    "diferencial_tecnico_nota": 36,
+    "diferencial_relacionamento_nota": 36,
+    "interesse_coletivo_nota": 0,  # Nota fixa 0 na planilha
+    
+    "plano_comunicacao_nota": 33,  # CORRIGIDO
+    "redes_sociais_nota": 33,  # CORRIGIDO
+    "monitoramento_nota": 33,  # CORRIGIDO
+    "conteudo_institucional_nota": 33,  # CORRIGIDO
+    "ativacoes_marca_nota": 33,  # CORRIGIDO
+    "direitos_imagem_nota": 33,  # CORRIGIDO
+    "contrapartida_imagem_nota": 33,  # CORRIGIDO
+    "site_oficial_nota": 33,  # CORRIGIDO
+    "exibicao_video_nota": 33,  # CORRIGIDO
+    "citacao_releases_nota": 33,  # CORRIGIDO
+    
+    "voluntariado_corporativo_nota": 25,  # CORRIGIDO
+    "datas_comemorativas_nota": 25,  # CORRIGIDO
+    "engajamento_comunitario_nota": 25,  # CORRIGIDO
+    
+    "captacao_nota": 25,  # CORRIGIDO
+    "execucao_garantida_nota": 25,  # CORRIGIDO
+    "cotas_nota": 25,  # CORRIGIDO
 }
 
 def extrair_dados_planilha(file_bytes: bytes) -> dict:

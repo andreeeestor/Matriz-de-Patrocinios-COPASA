@@ -25,9 +25,9 @@
           sans-serif;
         color: #0f172a;
         background: #f8fafc;
-        padding: 20px 16px;
-        max-width: 1060px;
+        padding: 0;
         margin: 0 auto;
+        max-width: 1060px;
         box-sizing: border-box;
       }
       #mp-root * {
@@ -512,6 +512,11 @@
       #mp-root .mp-field-group.mp-has-value textarea {
         border-color: rgba(14, 165, 233, 0.25);
       }
+      #mp-root .mp-field-group input.mp-invalid,
+      #mp-root .mp-field-group textarea.mp-invalid {
+        border-color: #ef4444 !important;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+      }
 
       #mp-root .mp-btn-wrapper {
         display: flex;
@@ -901,6 +906,48 @@
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
         };
 
+        var MAX_SCORES = {
+          valores_organizacionais_nota: 20,
+          diversidade_inclusao_nota: 20,
+          sustentabilidade_nota: 20,
+          portfolio_nota: 25,
+          experiencia_incentivos_nota: 25,
+          capacidade_tecnica_nota: 25,
+          governanca_nota: 25,
+          recursos_humanos_nota: 25,
+          recursos_financeiros_nota: 25,
+          experiencia_resultados_nota: 25,
+          parcerias_nota: 25,
+          beneficiarios_diretos_nota: 36,
+          beneficiarios_indiretos_nota: 36,
+          educacao_nota: 36,
+          saude_nota: 36,
+          inclusao_nota: 36,
+          esg_nota: 36,
+          diferencial_artistico_nota: 36,
+          diferencial_social_nota: 36,
+          diferencial_originalidade_nota: 36,
+          diferencial_tecnico_nota: 36,
+          diferencial_relacionamento_nota: 36,
+          interesse_coletivo_nota: 0,
+          plano_comunicacao_nota: 33,
+          redes_sociais_nota: 33,
+          monitoramento_nota: 33,
+          conteudo_institucional_nota: 33,
+          ativacoes_marca_nota: 33,
+          direitos_imagem_nota: 33,
+          contrapartida_imagem_nota: 33,
+          site_oficial_nota: 33,
+          exibicao_video_nota: 33,
+          citacao_releases_nota: 33,
+          voluntariado_corporativo_nota: 25,
+          datas_comemorativas_nota: 25,
+          engajamento_comunitario_nota: 25,
+          captacao_nota: 25,
+          execucao_garantida_nota: 25,
+          cotas_nota: 25,
+        };
+
         var SECTION_META = [
           { icon: "clipboard", ic: "mp-ic-blue", divider: null },
           { icon: "user", ic: "mp-ic-violet", divider: null },
@@ -958,7 +1005,7 @@
               { id: "bairro", label: "Bairro", type: "text" },
               { id: "cidade", label: "Cidade", type: "text" },
               { id: "estado", label: "Estado", type: "text" },
-              { id: "email", label: "E-mail", type: "email" },
+              { id: "email", label: "E-mail", type: "email", required: true },
               { id: "redes_sociais", label: "Redes Sociais", type: "text" },
             ],
           },
@@ -974,7 +1021,7 @@
               },
               { id: "rep_telefone", label: "Telefone (com DDD)", type: "text" },
               { id: "rep_celular", label: "Celular (com DDD)", type: "text" },
-              { id: "rep_email", label: "E-mail", type: "email" },
+              { id: "rep_email", label: "E-mail", type: "email", required: true },
             ],
           },
           {
@@ -1021,6 +1068,7 @@
                 id: "valor_solicitado_aporte",
                 label: "Valor Solicitado para Aporte",
                 type: "text",
+                required: true,
               },
               {
                 id: "local_realizacao",
@@ -1032,7 +1080,7 @@
                 label: "Período de Realização do Projeto",
                 type: "text",
               },
-              { id: "objetivo", label: "Objetivo", type: "textarea" },
+              { id: "objetivo", label: "Objetivo", type: "textarea", required: true },
               {
                 id: "publico_alvo",
                 label: "Público Alvo do Projeto",
@@ -1405,9 +1453,13 @@
 
             var label = document.createElement("label");
             label.setAttribute("for", field.id);
-            label.innerHTML =
-              field.label +
-              (field.required ? ' <span class="mp-required-dot"></span>' : "");
+            var maxScore = MAX_SCORES[field.id];
+            var labelText = field.label;
+            if (maxScore !== undefined) {
+              labelText += ' <span style="font-size: 0.75rem; color: #64748b; font-weight: 500;">(Máx: ' + maxScore + ')</span>';
+            }
+
+            label.innerHTML = labelText + (field.required ? ' <span class="mp-required-dot"></span>' : "");
             labelRow.appendChild(label);
 
             var obsId = field.id.endsWith("_nota")
@@ -1441,7 +1493,34 @@
             if (field.required) input.required = true;
             if (field.step) input.step = field.step;
 
+            if (maxScore !== undefined) {
+              input.min = 0;
+              input.max = maxScore;
+            }
+
             input.addEventListener("input", function () {
+              if (maxScore !== undefined && this.value !== "") {
+                var val = parseFloat(this.value.toString().replace(",", "."));
+                if (!isNaN(val)) {
+                  if (val > maxScore) {
+                    this.value = maxScore;
+                  } else if (val < 0) {
+                    this.value = 0;
+                  }
+                }
+              }
+
+              var isInvalid = false;
+              if (field.required && this.value.trim() === "") {
+                isInvalid = true;
+              } else if (field.type === "email" && this.value.trim() !== "") {
+                var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(this.value.trim())) {
+                  isInvalid = true;
+                }
+              }
+
+              this.classList.toggle("mp-invalid", isInvalid);
               group.classList.toggle("mp-has-value", this.value.trim() !== "");
               checkForm();
               atualizarScore();
@@ -1515,42 +1594,43 @@
         }
 
         function getClass(score) {
-          if (score < 100)
+          var p = TOTAL_MAX_SCORE > 0 ? (score / TOTAL_MAX_SCORE) : 0;
+          if (p < 0.15)
             return {
               label: "Zero",
               color: "#ef4444",
               bg: "rgba(239,68,68,0.08)",
               border: "rgba(239,68,68,0.18)",
             };
-          if (score < 200)
+          if (p < 0.30)
             return {
               label: "Ruim",
               color: "#f97316",
               bg: "rgba(249,115,22,0.08)",
               border: "rgba(249,115,22,0.18)",
             };
-          if (score < 300)
+          if (p < 0.45)
             return {
               label: "Regular",
               color: "#eab308",
               bg: "rgba(234,179,8,0.08)",
               border: "rgba(234,179,8,0.18)",
             };
-          if (score < 400)
+          if (p < 0.60)
             return {
               label: "Bom",
               color: "#22c55e",
               bg: "rgba(34,197,94,0.08)",
               border: "rgba(34,197,94,0.18)",
             };
-          if (score < 500)
+          if (p < 0.75)
             return {
               label: "Muito Bom",
               color: "#3b82f6",
               bg: "rgba(59,130,246,0.08)",
               border: "rgba(59,130,246,0.18)",
             };
-          if (score < 600)
+          if (p < 0.88)
             return {
               label: "Ótimo",
               color: "#8b5cf6",
@@ -1582,6 +1662,12 @@
           requestAnimationFrame(step);
         }
 
+        var TOTAL_MAX_SCORE = Object.values(MAX_SCORES).reduce(function (acc, curr) { return acc + curr; }, 0);
+        var classificationHintEl = document.querySelector(".mp-classification-hint");
+        if (classificationHintEl) {
+          classificationHintEl.textContent = "de 0 a " + TOTAL_MAX_SCORE + " pontos";
+        }
+
         function atualizarScore() {
           var total = calcularScore();
           var current = parseFloat(totalSpan.textContent) || 0;
@@ -1594,7 +1680,7 @@
           classSpan.style.borderColor = cls.border;
           classSpan.style.border = "1px solid " + cls.border;
 
-          barFill.style.width = Math.min((total / 722) * 100, 100) + "%";
+          barFill.style.width = Math.min((total / TOTAL_MAX_SCORE) * 100, 100) + "%";
           return total;
         }
 
