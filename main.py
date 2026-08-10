@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, FileResponse
 import os
 
-from routers import auth, planilha
+from routers import auth, planilha, ai
 from core.auth import get_current_user
 from schemas.planilha import PlanilhaData
 
@@ -24,6 +24,7 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(planilha.router)
+app.include_router(ai.router)
 
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():

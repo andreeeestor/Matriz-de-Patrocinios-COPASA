@@ -726,8 +726,16 @@
       </div>
 
       <div id="mpMainContent" style="display: none">
-        <form id="mpForm" autocomplete="off">
-          <div id="mpSectionsContainer"></div>
+        <!-- Navegação por Abas -->
+        <div style="display: flex; gap: 12px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">
+          <button type="button" id="tabFormBtn" class="mp-btn mp-btn-primary mp-enabled" style="max-width: 200px;">📝 Formulário</button>
+          <button type="button" id="tabAiBtn" class="mp-btn mp-enabled" style="max-width: 240px; background: #8b5cf6; color: #fff;">🤖 Analisador IA (Ollama)</button>
+        </div>
+
+        <!-- Seção 1: Formulário Original -->
+        <div id="mpFormSection">
+          <form id="mpForm" autocomplete="off">
+            <div id="mpSectionsContainer"></div>
           <div class="mp-score-panel">
             <div class="mp-score-left">
               <span id="mpTotalScore" class="mp-score-number">0</span>
@@ -757,6 +765,38 @@
             </button>
           </div>
         </form>
+      </div>
+
+      <!-- Seção 2: Analisador Inteligente IA -->
+      <div id="mpAiSection" style="display: none;">
+        <div style="background: #ffffff; border-radius: 12px; padding: 24px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+          <h2 style="font-size: 1.25rem; font-weight: 700; color: #1e293b; margin-bottom: 8px;">🤖 Análise Inteligente de Planilha (.xlsx)</h2>
+          <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Faça o upload de uma planilha preenchida da Matriz para que a IA (Ollama) identifique pontos fracos, gaps de pontuação e sugira melhorias.</p>
+
+          <div id="mpAiStatusBadge" style="margin-bottom: 16px; padding: 10px 14px; border-radius: 8px; font-size: 0.85rem; background: #f1f5f9; color: #475569;">
+            🔍 Verificando conexão com o servidor Ollama...
+          </div>
+
+          <div style="border: 2px dashed #cbd5e1; border-radius: 10px; padding: 32px; text-align: center; background: #f8fafc; cursor: pointer;" id="mpDropZone">
+            <input type="file" id="mpPlanilhaInput" accept=".xlsx" style="display: none;" />
+            <div style="font-size: 2rem; margin-bottom: 8px;">📊</div>
+            <p style="font-size: 0.95rem; font-weight: 600; color: #334155;">Clique aqui ou arraste o arquivo .xlsx</p>
+            <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 4px;">Tamanho máximo: 10MB</p>
+          </div>
+
+          <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
+            <button type="button" id="mpAnalisarBtn" class="mp-btn mp-enabled" style="background: #8b5cf6; color: #fff; min-width: 180px;">
+              <span class="mp-btn-text">Analisar com IA</span>
+              <span class="mp-spinner"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Container do Resultado da Análise -->
+        <div id="mpAiResultContainer" style="display: none; background: #ffffff; border-radius: 12px; padding: 24px; border: 1px solid #e2e8f0;">
+          <h3 style="font-size: 1.1rem; font-weight: 700; color: #1e293b; margin-bottom: 12px;">📊 Relatório Diagnóstico da IA</h3>
+          <div id="mpAiResultContent"></div>
+        </div>
       </div>
     </div>
 
@@ -1690,6 +1730,131 @@
         checkAuth();
         checkForm();
         atualizarScore();
+
+        // Lógica de Abas
+        var tabFormBtn = document.getElementById("tabFormBtn");
+        var tabAiBtn = document.getElementById("tabAiBtn");
+        var mpFormSection = document.getElementById("mpFormSection");
+        var mpAiSection = document.getElementById("mpAiSection");
+
+        tabFormBtn.addEventListener("click", function () {
+          mpFormSection.style.display = "block";
+          mpAiSection.style.display = "none";
+          tabFormBtn.classList.add("mp-btn-primary");
+          tabAiBtn.classList.remove("mp-btn-primary");
+        });
+
+        tabAiBtn.addEventListener("click", function () {
+          mpFormSection.style.display = "none";
+          mpAiSection.style.display = "block";
+          tabAiBtn.classList.add("mp-btn-primary");
+          tabFormBtn.classList.remove("mp-btn-primary");
+          checkOllamaStatus();
+        });
+
+        // Verificação do Ollama
+        async function checkOllamaStatus() {
+          var badge = document.getElementById("mpAiStatusBadge");
+          var token = sessionStorage.getItem("mp_token");
+          try {
+            var res = await fetch(API_BASE + "/ai/status", {
+              headers: { "Authorization": token ? ("Bearer " + token) : "" }
+            });
+            var data = await res.json();
+            if (data.status === "online") {
+              badge.style.background = "#ecfdf5";
+              badge.style.color = "#047857";
+              badge.innerHTML = "✅ Servidor Ollama Conectado (" + data.modelo_configurado + ") · Modelos: " + (data.modelos_disponiveis.join(", ") || "Nenhum detectado");
+            } else {
+              badge.style.background = "#fff1f2";
+              badge.style.color = "#b91c1c";
+              badge.innerHTML = "⚠️ Ollama Indisponível (" + data.erro + ")";
+            }
+          } catch (e) {
+            badge.style.background = "#fff1f2";
+            badge.style.color = "#b91c1c";
+            badge.innerHTML = "⚠️ Erro ao checar status da IA.";
+          }
+        }
+
+        // Dropzone e Upload de Planilha
+        var dropZone = document.getElementById("mpDropZone");
+        var planilhaInput = document.getElementById("mpPlanilhaInput");
+        var analisarBtn = document.getElementById("mpAnalisarBtn");
+        var selectedFile = null;
+
+        dropZone.addEventListener("click", function () { planilhaInput.click(); });
+        planilhaInput.addEventListener("change", function (e) {
+          if (e.target.files.length > 0) {
+            selectedFile = e.target.files[0];
+            dropZone.querySelector("p").textContent = "Arquivo selecionado: " + selectedFile.name;
+          }
+        });
+
+        analisarBtn.addEventListener("click", async function () {
+          if (!selectedFile) {
+            showToast("Selecione um arquivo .xlsx primeiro.", "error");
+            return;
+          }
+          this.classList.add("mp-loading");
+          var token = sessionStorage.getItem("mp_token");
+          var formData = new FormData();
+          formData.append("file", selectedFile);
+
+          try {
+            var res = await fetch(API_BASE + "/ai/analisar-planilha", {
+              method: "POST",
+              headers: { "Authorization": token ? ("Bearer " + token) : "" },
+              body: formData
+            });
+
+            var data = await res.json();
+            if (res.ok && data.sucesso) {
+              renderAiResult(data);
+              showToast("Análise concluída com sucesso!", "success");
+            } else {
+              showToast(data.detail || data.erro || "Erro na análise.", "error");
+            }
+          } catch (err) {
+            showToast("Erro de comunicação ao analisar a planilha.", "error");
+          } finally {
+            this.classList.remove("mp-loading");
+          }
+        });
+
+        function renderAiResult(data) {
+          var container = document.getElementById("mpAiResultContainer");
+          var content = document.getElementById("mpAiResultContent");
+          container.style.display = "block";
+
+          var ia = data.analise_ia || {};
+          var html = '<div style="font-size: 0.95rem; color: #334155; line-height: 1.6;">';
+          html += '<p style="margin-bottom: 12px; background: #f8fafc; padding: 12px; border-radius: 8px;"><strong>Projeto:</strong> ' + data.dados_extraidos.nome_projeto + ' (' + data.dados_extraidos.proponente + ')</p>';
+          html += '<p style="margin-bottom: 16px;"><strong>Resumo Executivo:</strong> ' + (ia.resumo_executivo || "N/A") + '</p>';
+
+          if (ia.pontos_fortes && ia.pontos_fortes.length > 0) {
+            html += '<h4 style="color: #166534; font-weight: 700; margin-top: 16px;">🌟 Pontos Fortes</h4><ul>';
+            ia.pontos_fortes.forEach(function (pf) { html += '<li>' + pf + '</li>'; });
+            html += '</ul>';
+          }
+
+          if (ia.oportunidades_melhoria && ia.oportunidades_melhoria.length > 0) {
+            html += '<h4 style="color: #9a3412; font-weight: 700; margin-top: 16px;">🚀 Oportunidades de Melhoria (Ganho de Pontos)</h4>';
+            ia.oportunidades_melhoria.forEach(function (op) {
+              html += '<div style="background: #fff7ed; border-left: 4px solid #f97316; padding: 10px 14px; margin-top: 8px; border-radius: 4px;">';
+              html += '<strong>' + (op.criterio || "Critério") + '</strong> (Nota: ' + op.nota_atual + ' / Máx: ' + op.nota_maxima + ')<br/>';
+              html += '<span style="color: #475569;">💡 ' + op.recomendacao + '</span>';
+              html += '</div>';
+            });
+          }
+
+          if (ia.conclusao) {
+            html += '<h4 style="font-weight: 700; margin-top: 16px;">📌 Conclusão</h4><p>' + ia.conclusao + '</p>';
+          }
+
+          html += '</div>';
+          content.innerHTML = html;
+        }
       })();
     </script>
   </body>
