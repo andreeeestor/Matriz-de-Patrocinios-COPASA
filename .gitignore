@@ -9,6 +9,5 @@ wheels/
 # Virtual environments
 .venv
 
-modelo.xlsx
 .env.local
 .env
