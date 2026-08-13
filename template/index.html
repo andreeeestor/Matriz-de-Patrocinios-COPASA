@@ -288,6 +288,7 @@
       #mp-root .mp-section.mp-active {
         border-color: #38bdf8;
         box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        overflow: visible;
       }
       #mp-root .mp-section-header {
         padding: 16px 22px;
@@ -344,6 +345,7 @@
       }
       #mp-root .mp-section.mp-active .mp-section-body {
         max-height: 4000px;
+        overflow: visible;
       }
       #mp-root .mp-section-body-inner {
         padding: 22px 26px;
@@ -473,12 +475,13 @@
         color: #0ea5e9;
       }
       #mp-root .mp-field-group input,
-      #mp-root .mp-field-group textarea {
+      #mp-root .mp-field-group textarea,
+      #mp-root .mp-field-group select {
         background: #ffffff;
         border: 1px solid #e2e8f0;
         border-radius: 10px;
-        padding: 10px 14px;
-        font-size: 0.88rem;
+        padding: 9px 12px;
+        font-size: 0.81rem;
         font-family: "DM Sans", sans-serif;
         color: #0f172a;
         outline: none;
@@ -911,6 +914,7 @@
               <span id="mpTotalScore" class="mp-score-number">0</span>
               <div class="mp-score-meta">
                 <span class="mp-score-meta-label">Pontuação Total</span>
+                <span id="mpAiBadgeTag" style="display: none; font-size: 0.65rem; color: #8b5cf6; font-weight: 600; margin-left: 6px; background: #f3e8ff; padding: 2px 6px; border-radius: 4px;">calculada pela IA</span>
                 <div class="mp-score-bar-outer">
                   <div id="mpScoreBarFill" class="mp-score-bar-inner"></div>
                 </div>
@@ -933,9 +937,9 @@
               type="button"
               id="mpAvaliarFormBtn"
               class="mp-btn mp-enabled"
-              style="background: #8b5cf6; color: #ffffff;"
+              style="background: #8b5cf6; color: #ffffff; min-width: 180px;"
             >
-              <span class="mp-btn-text">Avaliar com IA</span>
+              <span class="mp-btn-text">Verificar Pontuação</span>
               <span class="mp-spinner"></span>
             </button>
             <button type="button" id="mpGerarBtn" class="mp-btn mp-btn-primary">
@@ -2287,6 +2291,9 @@
                 
                 checkForm();
                 atualizarScore();
+
+                var aiBadge = document.getElementById("mpAiBadgeTag");
+                if (aiBadge) aiBadge.style.display = "inline-block";
 
                 // Renderizar a análise no container diagnóstico
                 renderAiResult({
