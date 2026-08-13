@@ -2734,13 +2734,34 @@
                   noticeEl.textContent = "(Pontuação calculada pela IA)";
                 }
 
+                // Calcular subtotais por eixo a partir das notas da IA
+                var notas = resultData.notas_atribuidas || {};
+                function somarNotas(keys) {
+                  return keys.reduce(function(acc, k) {
+                    return acc + (parseFloat(notas[k]) || 0);
+                  }, 0);
+                }
+                var secoes_pontuacao = [
+                  somarNotas(["valores_organizacionais_nota", "diversidade_inclusao_nota", "sustentabilidade_nota"]),
+                  somarNotas(["portfolio_nota", "experiencia_incentivos_nota", "capacidade_tecnica_nota", "governanca_nota", "recursos_humanos_nota", "recursos_financeiros_nota", "experiencia_resultados_nota", "parcerias_nota"]),
+                  somarNotas(["beneficiarios_diretos_nota", "beneficiarios_indiretos_nota", "educacao_nota", "saude_nota", "inclusao_nota", "esg_nota", "diferencial_artistico_nota", "diferencial_social_nota", "diferencial_originalidade_nota", "diferencial_tecnico_nota", "diferencial_relacionamento_nota", "interesse_coletivo_nota"]),
+                  somarNotas(["plano_comunicacao_nota", "redes_sociais_nota", "monitoramento_nota", "conteudo_institucional_nota", "ativacoes_marca_nota", "direitos_imagem_nota", "contrapartida_imagem_nota", "site_oficial_nota", "exibicao_video_nota", "citacao_releases_nota"]),
+                  somarNotas(["voluntariado_corporativo_nota", "datas_comemorativas_nota", "engajamento_comunitario_nota"]),
+                  somarNotas(["captacao_nota", "execucao_garantida_nota", "cotas_nota"])
+                ];
+
                 // Renderizar a análise no container diagnóstico
                 renderAiResult({
                   dados_extraidos: {
                     nome_projeto: data.nome_projeto || "Projeto de Patrocínio",
                     proponente: data.proponente || "Proponente",
+                    objetivo: data.objetivo || "",
+                    local_realizacao: data.local_realizacao || "",
+                    periodo_realizacao: data.periodo_realizacao || data.periodo_execucao || "",
+                    valor_solicitado: data.valor_solicitado_aporte || data.valor_solicitado || "",
                     pontuacao_total_obtida: scoreTotalIA,
                     pontuacao_maxima_possivel: resultData.pontuacao_maxima_possivel || 1000,
+                    secoes_pontuacao: secoes_pontuacao,
                   },
                   analise_ia: {
                     resumo_executivo: resultData.resumo_avaliador || "Avaliação detalhada realizada pelo comitê de Inteligência Artificial da COPASA.",
@@ -2810,12 +2831,22 @@
 
           var html = '<div style="font-size: 0.92rem; color: #334155; line-height: 1.65;">';
 
-          // ── Cabeçalho
+          // ── Cabeçalho com resumo do projeto
           html += '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px 16px;margin-bottom:16px;">';
-          html += '<div style="font-weight:700;font-size:1rem;color:#0f172a;margin-bottom:4px;">';
+          html += '<div style="font-weight:700;font-size:1rem;color:#0f172a;margin-bottom:6px;">';
           html += icon("M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z", "#0284c7") + (de.nome_projeto || "Projeto de Patrocínio");
           html += '</div>';
-          html += '<div style="color:#64748b;font-size:0.85rem;">' + icon("M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2", "#64748b") + (de.proponente || "Proponente") + '</div>';
+          html += '<div style="color:#64748b;font-size:0.85rem;margin-bottom:8px;">' + icon("M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2", "#64748b") + (de.proponente || "Proponente") + '</div>';
+          if (de.objetivo) {
+            html += '<p style="margin:0 0 8px;font-size:0.875rem;color:#475569;line-height:1.5;border-top:1px solid #e2e8f0;padding-top:8px;">' + de.objetivo + '</p>';
+          }
+          var metaItems = [];
+          if (de.local_realizacao) metaItems.push(icon("M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z", "#94a3b8") + de.local_realizacao);
+          if (de.periodo_realizacao) metaItems.push(icon("M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z", "#94a3b8") + de.periodo_realizacao);
+          if (de.valor_solicitado) metaItems.push(icon("M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6", "#94a3b8") + 'R$ ' + parseFloat(de.valor_solicitado).toLocaleString('pt-BR', {minimumFractionDigits:2}));
+          if (metaItems.length > 0) {
+            html += '<div style="display:flex;flex-wrap:wrap;gap:12px;font-size:0.8rem;color:#64748b;">' + metaItems.join('') + '</div>';
+          }
           html += '</div>';
 
           // ── Tabela de Resumo Executivo
@@ -2837,6 +2868,7 @@
           html += '<th style="text-align:center;padding:7px 10px;border-bottom:1px solid #e2e8f0;color:#475569;font-weight:600;">Pontuação IA</th>';
           html += '<th style="text-align:center;padding:7px 10px;border-bottom:1px solid #e2e8f0;color:#475569;font-weight:600;">Máximo</th>';
           html += '</tr></thead><tbody>';
+          var secs = de.secoes_pontuacao || [];
           var eixos = [
             { label: "1. Alinhamento Estratégico", max: 60 },
             { label: "2. Capacidade Institucional", max: 200 },
@@ -2846,9 +2878,19 @@
             { label: "6. Viabilidade Financeira", max: 75 }
           ];
           eixos.forEach(function(e, i) {
+            var secScore = secs[i] !== undefined ? secs[i] : null;
+            var secPct = secScore !== null ? Math.min(Math.round((secScore / e.max) * 100), 100) : null;
+            var secColor = secPct === null ? "#94a3b8" : secPct >= 80 ? "#16a34a" : secPct >= 60 ? "#0284c7" : secPct >= 40 ? "#f59e0b" : "#dc2626";
+            var secBg = secPct === null ? "#f1f5f9" : secPct >= 80 ? "#f0fdf4" : secPct >= 60 ? "#eff6ff" : secPct >= 40 ? "#fffbeb" : "#fef2f2";
             html += '<tr style="border-bottom:1px solid #f1f5f9;' + (i % 2 ? 'background:#fafafa;' : '') + '">';
             html += '<td style="padding:7px 10px;color:#334155;">' + e.label + '</td>';
-            html += '<td style="padding:7px 10px;text-align:center;color:#0f172a;font-weight:600;">—</td>';
+            if (secScore !== null) {
+              html += '<td style="padding:7px 10px;text-align:center;">';
+              html += '<span style="font-weight:700;color:' + secColor + ';background:' + secBg + ';padding:2px 10px;border-radius:99px;font-size:0.85rem;">' + secScore.toFixed(1) + '</span>';
+              html += '</td>';
+            } else {
+              html += '<td style="padding:7px 10px;text-align:center;color:#94a3b8;">—</td>';
+            }
             html += '<td style="padding:7px 10px;text-align:center;color:#64748b;">' + e.max + '</td>';
             html += '</tr>';
           });
