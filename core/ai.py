@@ -107,31 +107,9 @@ def extrair_dados_planilha(file_bytes: bytes) -> dict:
     }
 
 async def chamar_llm(system_prompt: str, user_prompt: str, expect_json: bool = True) -> str:
-    """Executa a requisição para Ollama Local (sem custos) ou fallback para Groq Cloud API."""
-    if settings.USE_LOCAL_LLM:
-        try:
-            async with httpx.AsyncClient(timeout=60.0) as client:
-                res = await client.post(
-                    f"{settings.OLLAMA_HOST}/api/chat",
-                    json={
-                        "model": settings.OLLAMA_MODEL,
-                        "messages": [
-                            {"role": "system", "content": system_prompt},
-                            {"role": "user", "content": user_prompt}
-                        ],
-                        "stream": False,
-                        "format": "json" if expect_json else None
-                    }
-                )
-                if res.status_code == 200:
-                    res_data = res.json()
-                    return res_data.get("message", {}).get("content", "{}")
-        except Exception:
-            # Se o servidor Ollama não estiver rodando localmente, recorre à API do Groq
-            pass
-
+    """Executa a requisição diretamente para a Groq Cloud API."""
     if not settings.GROQ_API_KEY:
-        raise Exception("GROQ_API_KEY não foi configurada e o servidor local Ollama não respondeu.")
+        raise Exception("GROQ_API_KEY não foi configurada no ambiente (.env ou servidor).")
 
     headers = {
         "Authorization": f"Bearer {settings.GROQ_API_KEY}",
@@ -197,7 +175,7 @@ async def analisar_planilha_com_groq(dados_planilha: dict) -> dict:
         
         return {
             "sucesso": True,
-            "modelo_usado": settings.OLLAMA_MODEL if settings.USE_LOCAL_LLM else settings.GROQ_MODEL,
+            "modelo_usado": settings.GROQ_MODEL,
             "dados_extraidos": {
                 "nome_projeto": dados_planilha["nome_projeto"],
                 "proponente": dados_planilha["proponente"],
@@ -213,7 +191,7 @@ async def analisar_planilha_com_groq(dados_planilha: dict) -> dict:
         }
 
 async def avaliar_formulario_com_groq(dados_form: dict) -> dict:
-    """Recebe os dados textuais do formulário preenchido e utiliza a IA (Ollama local ou Groq) para avaliar e atribuir notas."""
+    """Recebe os dados textuais do formulário preenchido e utiliza a IA Groq para avaliar e atribuir notas."""
     system_prompt = (
         "Você é um comitê avaliador especialista em projetos e patrocínios da COPASA. "
         "Sua função é analisar as descrições, justificativas e informações prestadas pelo proponente e ATRIBUIR UMA NOTA JUSTA "
@@ -255,7 +233,6 @@ async def avaliar_formulario_com_groq(dados_form: dict) -> dict:
         for crit, max_val in MAX_SCORES.items():
             val_dado = notas_dict.get(crit, None)
             if val_dado is None:
-                # Se o modelo local omitiu a nota de algum critério, calcula nota proporcional com base no tamanho da descrição
                 desc = str(dados_form.get(crit, "")).strip()
                 val_num = float(max_val) * 0.85 if len(desc) > 20 else (float(max_val) * 0.5 if len(desc) > 0 else 0.0)
             else:
@@ -273,7 +250,7 @@ async def avaliar_formulario_com_groq(dados_form: dict) -> dict:
 
         return {
             "sucesso": True,
-            "modelo_usado": settings.OLLAMA_MODEL if settings.USE_LOCAL_LLM else settings.GROQ_MODEL,
+            "modelo_usado": settings.GROQ_MODEL,
             "pontuacao_total_obtida": round(pontuacao_total, 2),
             "pontuacao_maxima_possivel": sum(MAX_SCORES.values()),
             "notas_atribuidas": notas_ajustadas,
