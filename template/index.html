@@ -508,6 +508,13 @@
         -webkit-appearance: none;
         margin: 0;
       }
+      #mp-root .mp-field-group input::placeholder,
+      #mp-root .mp-field-group textarea::placeholder,
+      #mp-root .mp-obs-input::placeholder {
+        font-size: 0.78rem;
+        color: #94a3b8;
+        font-weight: 400;
+      }
       #mp-root .mp-field-group.mp-has-value input,
       #mp-root .mp-field-group.mp-has-value textarea {
         border-color: rgba(14, 165, 233, 0.25);
@@ -516,6 +523,104 @@
       #mp-root .mp-field-group textarea.mp-invalid {
         border-color: #ef4444 !important;
         box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+      }
+
+      /* Estilos do Multiselect Customizado */
+      #mp-root .mp-multiselect {
+        position: relative;
+        width: 100%;
+        font-family: "DM Sans", sans-serif;
+      }
+      #mp-root .mp-multiselect-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        color: #0f172a;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.2s ease;
+      }
+      #mp-root .mp-multiselect-header:hover {
+        border-color: #0284c7;
+        background: #f8fafc;
+      }
+      #mp-root .mp-multiselect.mp-open .mp-multiselect-header {
+        border-color: #0284c7;
+        box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+      }
+      #mp-root .mp-multiselect-arrow {
+        width: 16px;
+        height: 16px;
+        color: #0284c7;
+        transition: transform 0.2s ease;
+      }
+      #mp-root .mp-multiselect.mp-open .mp-multiselect-arrow {
+        transform: rotate(180deg);
+      }
+      #mp-root .mp-multiselect-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-top: none;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        max-height: 220px;
+        overflow-y: auto;
+        display: none;
+        padding: 6px 0;
+        margin-top: 2px;
+      }
+      #mp-root .mp-multiselect.mp-open .mp-multiselect-dropdown {
+        display: block;
+      }
+      #mp-root .mp-multiselect-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 14px;
+        font-size: 0.86rem;
+        color: #334155;
+        cursor: pointer;
+        transition: background 0.15s ease;
+      }
+      #mp-root .mp-multiselect-option:hover {
+        background: #f1f5f9;
+        color: #0284c7;
+      }
+      #mp-root .mp-multiselect-checkbox {
+        width: 17px;
+        height: 17px;
+        border: 2px solid #94a3b8;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s ease;
+      }
+      #mp-root .mp-multiselect-option.mp-selected .mp-multiselect-checkbox {
+        background: #0284c7;
+        border-color: #0284c7;
+      }
+      #mp-root .mp-multiselect-option.mp-selected .mp-multiselect-checkbox::after {
+        content: "";
+        width: 4px;
+        height: 8px;
+        border: solid #ffffff;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+        margin-bottom: 2px;
       }
 
       #mp-root .mp-btn-wrapper {
@@ -1029,9 +1134,8 @@
               { id: "email", label: "E-mail", type: "email", required: true },
               {
                 id: "redes_sociais",
-                label: "Redes Sociais (segure Ctrl/Cmd para selecionar várias)",
-                type: "select",
-                multiple: true,
+                label: "Redes Sociais",
+                type: "multiselect",
                 options: [
                   "Instagram",
                   "Facebook",
@@ -1538,6 +1642,74 @@
               input = document.createElement("textarea");
               input.rows = 3;
               if (field.placeholder) input.placeholder = field.placeholder;
+            } else if (field.type === "multiselect") {
+              var hiddenInput = document.createElement("input");
+              hiddenInput.type = "hidden";
+              hiddenInput.id = field.id;
+              hiddenInput.name = field.id;
+              group.appendChild(hiddenInput);
+
+              var msWrapper = document.createElement("div");
+              msWrapper.className = "mp-multiselect";
+
+              var msHeader = document.createElement("div");
+              msHeader.className = "mp-multiselect-header";
+              msHeader.innerHTML = '<span class="mp-multiselect-label" style="color: #94a3b8;">Selecione as redes sociais...</span><svg class="mp-multiselect-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+
+              var msDropdown = document.createElement("div");
+              msDropdown.className = "mp-multiselect-dropdown";
+
+              var selectedValues = [];
+
+              (field.options || []).forEach(function (optText) {
+                var optRow = document.createElement("div");
+                optRow.className = "mp-multiselect-option";
+                optRow.innerHTML = '<div class="mp-multiselect-checkbox"></div><span>' + optText + '</span>';
+
+                optRow.addEventListener("click", function (e) {
+                  e.stopPropagation();
+                  var idx = selectedValues.indexOf(optText);
+                  if (idx > -1) {
+                    selectedValues.splice(idx, 1);
+                    optRow.classList.remove("mp-selected");
+                  } else {
+                    selectedValues.push(optText);
+                    optRow.classList.add("mp-selected");
+                  }
+
+                  hiddenInput.value = selectedValues.join(", ");
+                  var labelSpan = msHeader.querySelector(".mp-multiselect-label");
+                  if (selectedValues.length > 0) {
+                    labelSpan.textContent = selectedValues.join(", ");
+                    labelSpan.style.color = "#0f172a";
+                    group.classList.add("mp-has-value");
+                  } else {
+                    labelSpan.textContent = "Selecione as redes sociais...";
+                    labelSpan.style.color = "#94a3b8";
+                    group.classList.remove("mp-has-value");
+                  }
+                  checkForm();
+                });
+
+                msDropdown.appendChild(optRow);
+              });
+
+              msHeader.addEventListener("click", function (e) {
+                e.stopPropagation();
+                // Fechar outros multiselects se existirem
+                document.querySelectorAll(".mp-multiselect").forEach(function(el) {
+                  if (el !== msWrapper) el.classList.remove("mp-open");
+                });
+                msWrapper.classList.toggle("mp-open");
+              });
+
+              document.addEventListener("click", function () {
+                msWrapper.classList.remove("mp-open");
+              });
+
+              msWrapper.appendChild(msHeader);
+              msWrapper.appendChild(msDropdown);
+              input = msWrapper;
             } else if (field.type === "select") {
               input = document.createElement("select");
               if (field.multiple) {

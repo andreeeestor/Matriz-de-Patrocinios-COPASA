@@ -27,6 +27,7 @@ app.include_router(planilha.router)
 app.include_router(ai.router)
 
 @app.get("/health", status_code=200)
+@app.options("/health", status_code=200)
 async def health_check():
     return {"status": "ok", "message": "Service is healthy"}
 
