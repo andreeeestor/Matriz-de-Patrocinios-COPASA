@@ -98,6 +98,9 @@
       #mp-root .mp-login-error.mp-show {
         display: block;
       }
+      #mp-root #mpMainContent {
+        padding: 20px;
+      }
       #mp-root .mp-field-group {
         display: flex;
         flex-direction: column;
@@ -930,6 +933,18 @@
             </div>
           </div>
           <div class="mp-btn-wrapper">
+            <button
+              type="button"
+              id="mpMockDataBtn"
+              class="mp-btn"
+              style="background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd;"
+              title="Preenche automaticamente o formulário com dados de demonstração para testes"
+            >
+              <svg style="width: 15px; height: 15px; margin-right: 4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+              </svg>
+              <span>Preencher Demo</span>
+            </button>
             <button
               type="button"
               id="mpResetBtn"
@@ -2025,6 +2040,324 @@
           atualizarScore();
           showToast("Campos limpos", "success");
         });
+
+        var mockBtn = document.getElementById("mpMockDataBtn");
+        if (mockBtn) {
+          mockBtn.addEventListener("click", function () {
+            var mockProfiles = [
+              // Perfil 1: Projeto Cultural de Grande Porte (Alta Pontuação ~900+ pts)
+              {
+                nome_perfil: "Projeto de Grande Porte (Alta Pontuação)",
+                data: {
+                  proponente: "Instituto Cultural Águas & Vida",
+                  razao_social: "Instituto Cultural Águas & Vida Esporte e Sustentabilidade",
+                  cnpj: "12.345.678/0001-90",
+                  rua: "Av. Afonso Pena",
+                  numero: "1500",
+                  complemento: "Andar 12",
+                  bairro: "Centro",
+                  cidade: "Belo Horizonte",
+                  estado: "MG",
+                  email: "contato@aguasevida.org.br",
+                  redes_sociais: "Instagram, Facebook, LinkedIn, YouTube, TikTok",
+                  
+                  rep_nome: "Carlos Eduardo Silva",
+                  rep_cpf: "123.456.789-00",
+                  rep_cargo: "Diretor Executivo",
+                  rep_email: "carlos.silva@aguasevida.org.br",
+                  rep_telefone: "(31) 98765-4321",
+                  
+                  nome_projeto: "Festival Internacional das Águas & Sustentabilidade 2026",
+                  valor_solicitado: "250000.00",
+                  local_realizacao: "Belo Horizonte, Contagem e Betim",
+                  periodo_execucao: "10/05/2026 a 20/10/2026",
+                  lei_incentivo: "Sim",
+                  codigo_aprovacao: "PRONAC-2026-8890",
+                  valor_aprovacao: "250000.00",
+                  artigo: "Artigo 18",
+                  objetivo: "Promover a conscientização sobre a preservação dos recursos hídricos através de apresentações culturais gratuitas, exposições imersivas e oficinas ambientais de alto impacto.",
+                  
+                  banco: "Banco do Brasil",
+                  agencia: "1234-5",
+                  conta: "98765-4",
+                  
+                  meta_publico_nota: "Previsão de 50.000 participantes presenciais ao longo dos 7 dias de festival e mais de 200.000 espectadores no transmissão virtual.",
+                  historico_nota: "Instituição com mais de 15 anos de atuação ininterrupta na gestão cultural e ambiental em Minas Gerais, com prêmios nacionais.",
+                  abrangencia_nota: "Impacto regional em 12 municípios da Região Metropolitana de BH atendidos diretamente pela infraestrutura da COPASA.",
+                  contrapartidas_nota: "Cessão de espaço master de 100m² para estande interativo da COPASA, menção destacada da marca como patrocinador master em todas as peças digitais e físicas.",
+                  
+                  beneficiarios_diretos_nota: "Atendimento direto a 15.000 alunos da rede pública de ensino fundamental e médio com transporte e lanche gratuitos.",
+                  beneficiarios_indiretos_nota: "Estimativa de impactar 500.000 moradores com campanhas educativas de economia de água veiculadas na mídia regional.",
+                  educacao_nota: "Realização de 50 oficinas pedagógicas sobre saneamento, reuso de água e ciclo hídrico ministradas por especialistas.",
+                  saude_nota: "Programa de orientação comunitária sobre saúde preventiva, higiene e combate à contaminação hídrica em áreas vulneráveis.",
+                  inclusao_nota: "100% de acessibilidade motora, intérpretes de LIBRAS em todas as atividades, audiodescrição e monitores especializados para neurodivergentes.",
+                  esg_nota: "Certificação de evento Lixo Zero, inventário e neutralização total de emissões de carbono e contratação exclusiva de cooperativas locais de reciclagem.",
+                  diferencial_artistico_nota: "Curadoria artística internacional trazendo espetáculos inéditos, grandes nomes da música brasileira e orquestra comunitária.",
+                  diferencial_social_nota: "Geração de mais de 250 empregos diretos e indiretos para profissionais da cadeia produtiva local.",
+                  diferencial_originalidade_nota: "Instalação de pavilhão sensorial com projeções 3D interativas simulando o tratamento de água e o rio São Francisco.",
+                  diferencial_tecnico_nota: "Desenvolvimento de material didático próprio validado por comitê científico da UFMG e distribuído gratuitamente às escolas.",
+                  diferencial_relacionamento_nota: "Área VIP exclusiva para encontros corporativos da diretoria da COPASA, clientes estratégicos e autoridades públicas.",
+                  interesse_coletivo_nota: "Mobilização da população em prol do saneamento básico e da preservação dos mananciais que abastecem o estado.",
+                  
+                  plano_comunicacao_nota: "Plano robusto contemplando veiculação em TV aberta (Globo/Record), spot em rádio, mídias externas (outdoors e busdoor) e forte campanha de performance online.",
+                  redes_sociais_nota: "Instagram, Facebook, LinkedIn, YouTube, TikTok",
+                  monitoramento_nota: "Monitoramento diário com relatório detalhado de valoração de mídia espontânea (clipping) e métricas de alcance digital emitido por agência independente.",
+                  conteudo_institucional_nota: "Exibição obrigatória de filme institucional da COPASA de 60 segundos antes de todas as apresentações principais e logotipo em destaque no palco principal.",
+                  conteudo_institucional_tipo: "TV / Vídeo",
+                  ativacoes_marca_nota: "Estande 'Estação COPASA' com distribuição de água gelada potável, jogos educativos com prêmios e espaço para fotos instantâneas.",
+                  direitos_imagem_nota: "Cessão irrestrita dos direitos de uso de imagem, áudio e fotografia por 5 anos para campanhas publicitárias da COPASA.",
+                  contrapartida_imagem_nota: "Insert de página inteira na revista oficial do evento e menção de agradecimento nos discursos formais de abertura e encerramento.",
+                  site_oficial_nota: "Banner principal com link direto para o portal da COPASA no topo do site do evento, com previsão de 100 mil acessos únicos.",
+                  exibicao_video_nota: "Projeção de vídeos educativos da COPASA em painéis de LED de 10 metros durante os intervalos dos shows.",
+                  citacao_releases_nota: "Citação obrigatória da COPASA no primeiro parágrafo de todos os press releases e comunicados distribuídos à imprensa nacional.",
+                  
+                  voluntariado_corporativo_nota: "Vagas reservadas para até 50 colaboradores da COPASA atuarem como voluntários e mentores nas oficinas ambientais.",
+                  datas_comemorativas_nota: "Ação especial integrada ao Dia Mundial da Água e à Semana do Meio Ambiente com programação dedicada.",
+                  engajamento_comunitario_nota: "Mutirão de limpeza de margens de rios e plantio de 2.000 mudas nativas com participação ativa da comunidade local.",
+                  
+                  inclusao_material: "Sim, inclusão de folhetos educativos e brindes ecológicos da COPASA em todos os 5.000 kits distribuídos.",
+                  cessao_convites: "Disponibilização de 300 ingressos VIP e 1.000 cortesias para colaboradores e convidados institucionais da COPASA.",
+                  estande: "Área reservada de 10x10m com ponto de água e energia garantidos na praça central do evento.",
+                  palestrantes: "Direito de indicação de 2 especialistas da COPASA para integrar os painéis principais sobre sustentabilidade.",
+                  cortesias_escolas: "Doação de 3.000 ingressos com transporte para alunos de escolas públicas da periférica.",
+                  citacao_evento: "Citação expressa da COPASA pela apresentação do evento e mestre de cerimônias em todas as noites.",
+                  
+                  captacao_nota: "Projeto com 75% da captação já garantida através de outros patrocinadores confirmados (Banco BMG e Cemig).",
+                  execucao_garantida_nota: "Plano B estruturado para execução integral das atividades principais mesmo com 50% de orçamento captado.",
+                  cotas_nota: "Cota Apresenta / Master oferecida com exclusividade no segmento de saneamento e utilidades públicas.",
+                  
+                  custo_beneficio_nota: "Custo por beneficiário direto de apenas R$ 5,00, oferecendo um dos melhores índices de eficiência de mídia da região.",
+                  clareza_nota: "Projeto estruturado rigorosamente conforme os padrões da ISO 20121 para gestão sustentável de eventos.",
+                  
+                  capacidade_execucao_nota: "Corpo técnico fixo composto por produtores executivos com vasta experiência e 100% de aprovação de contas no Ministério da Cultura.",
+                  orcamento_nota: "Planilha orçamentária detalhada por item de custo com cotações recentes de fornecedores credenciados."
+                }
+              },
+
+              // Perfil 2: Projeto Esportivo de Médio Porte (Pontuação Média ~650+ pts)
+              {
+                nome_perfil: "Projeto Esportivo Comunitário (Pontuação Média)",
+                data: {
+                  proponente: "Instituto Esporte & Saúde Para Todos",
+                  razao_social: "Instituto Esporte & Saúde Para Todos de Minas",
+                  cnpj: "98.765.432/0001-10",
+                  rua: "Rua dos Tupis",
+                  numero: "450",
+                  complemento: "Sala 201",
+                  bairro: "Barro Preto",
+                  cidade: "Belo Horizonte",
+                  estado: "MG",
+                  email: "projetos@esporteparatodos.org.br",
+                  redes_sociais: "Instagram, Facebook, YouTube",
+                  
+                  rep_nome: "Mariana Alvares Mendes",
+                  rep_cpf: "987.654.321-11",
+                  rep_cargo: "Coordenadora de Projetos",
+                  rep_email: "mariana.mendes@esporteparatodos.org.br",
+                  rep_telefone: "(31) 99123-8877",
+                  
+                  nome_projeto: "Circuito Corridão das Águas & Cidadania",
+                  valor_solicitado: "90000.00",
+                  local_realizacao: "Montes Claros e Uberaba",
+                  periodo_execucao: "01/06/2026 a 15/11/2026",
+                  lei_incentivo: "Sim",
+                  codigo_aprovacao: "LIE-MG-2026-4412",
+                  valor_aprovacao: "90000.00",
+                  artigo: "Artigo 27",
+                  objetivo: "Promover corridas de rua populares e oficinas esportivas para jovens de baixa renda, incentivando hábitos saudáveis.",
+                  
+                  banco: "Caixa Econômica Federal",
+                  agencia: "0088-1",
+                  conta: "12345-6",
+                  
+                  meta_publico_nota: "Estimativa de 3.500 corredores inscritos e cerca de 10.000 visitantes na arena das provas.",
+                  historico_nota: "Organização comunitária criada em 2018 com histórico de 6 corridas rurais e urbanas realizadas no interior de Minas.",
+                  abrangencia_nota: "Atendimento direto às cidades de Montes Claros e Uberaba com ampla participação de atletas amadores regionais.",
+                  contrapartidas_nota: "Marca da COPASA nas camisas oficiais dos atletas, pórtico de largada, medalhas de participação e backdrop de premiação.",
+                  
+                  beneficiarios_diretos_nota: "Inscrição gratuita garantida para 1.000 jovens estudantes da rede pública e atletas PCDs.",
+                  beneficiarios_indiretos_nota: "População local impactada pelas feiras de saúde e estandes montados nas praças durante o fim de semana.",
+                  educacao_nota: "Palestras rápidas sobre hidratação correta e sustentabilidade na prática de atividades físicas ao ar livre.",
+                  saude_nota: "Exames básicos de aferição de pressão, glicemia e orientação nutricional gratuita para a comunidade.",
+                  inclusao_nota: "Categorias dedicadas a cadeirantes e deficientes visuais com premiação em troféus e acompanhamento médico.",
+                  esg_nota: "Coleta seletiva de copos plásticos de água utilizados nas corridas para reciclagem imediata.",
+                  diferencial_artistico_nota: "Apresentação de bandas de fanfarra e grupos culturais de percussão locais no encerramento da prova.",
+                  diferencial_social_nota: "Arrecadação de 2 toneladas de alimentos não perecíveis entregues a entidades de apoio social dos municípios.",
+                  diferencial_originalidade_nota: "Medalhas fabricadas com material plástico reciclado colhido de reservatórios e rios da região.",
+                  diferencial_tecnico_nota: "Cronometragem eletrônica por chip de alta precisão e percursos aferidos pela Federação Mineira de Atletismo.",
+                  diferencial_relacionamento_nota: "Possibilidade de criar a 'Tenda VIP COPASA' para convidados e equipe regional de colaboradores.",
+                  interesse_coletivo_nota: "Incentivo à prática esportiva gratuita como ferramenta de prevenção de doenças de saúde pública.",
+                  
+                  plano_comunicacao_nota: "Divulgação focada em rádio local, redes sociais do circuito, panfletagem em academias e pontos de apoio aos corredores.",
+                  redes_sociais_nota: "Instagram, Facebook, YouTube",
+                  monitoramento_nota: "Entrega de relatório ao final de cada etapa com números de inscritos, clipping de jornal local e álbum fotográfico.",
+                  conteudo_institucional_nota: "Aplicação do selo COPASA como patrocinadora oficial em todo o material de comunicação e camisetas.",
+                  conteudo_institucional_tipo: "Rádio",
+                  ativacoes_marca_nota: "Ponto de hidratação 'Água COPASA' no km 5 do percurso e na linha de chegada com distribuição de garrafinhas reutilizáveis.",
+                  direitos_imagem_nota: "Cessão das fotos e vídeos das etapas para reprodução nas redes sociais e relatórios da COPASA.",
+                  contrapartida_imagem_nota: "Logotipo nos números de peito de todos os atletas e painéis informativos ao longo do percurso.",
+                  site_oficial_nota: "Logotipo em destaque na página de inscrições do evento com link direcionado.",
+                  exibicao_video_nota: "Exibição de vinheta da COPASA no telão da arena antes da largada e durante a premiação dos vencedores.",
+                  citacao_releases_nota: "Agradecimento público à COPASA nos releases enviados à imprensa regional do Norte e Triângulo Mineiro.",
+                  
+                  voluntariado_corporativo_nota: "Oportunidade para colaboradores da COPASA atuarem como entregadores de medalhas e pontos de apoio aos atletas.",
+                  datas_comemorativas_nota: "Prova realizada em alusão ao Dia do Desafio e incentivo à qualidade de vida no trabalho.",
+                  engajamento_comunitario_nota: "Participação de associações de bairro na organização dos pontos de apoio ao longo do trajeto.",
+                  
+                  inclusao_material: "Inclusão de informativo sobre consumo responsável de água no kit do corredor.",
+                  cessao_convites: "Cessão de 100 inscrições gratuitas para a equipe de corrida de colaboradores da COPASA.",
+                  estande: "Espaço reservado para tenda de atendimento e hidratação na arena central do evento.",
+                  palestrantes: "Abertura da cerimônia de premiação com fala da liderança regional da COPASA.",
+                  cortesias_escolas: "Distribuição de 300 kits de corrida para alunos da rede pública de ensino.",
+                  citacao_evento: "Anúncio do nome da COPASA pelo locutor da prova durante todo o percurso e cerimônia.",
+                  
+                  captacao_nota: "Projeto com 50% dos recursos captados até o momento via apoio da prefeitura e comércio local.",
+                  execucao_garantida_nota: "Garantia de realização das 2 etapas principais mesmo em caso de captação parcial.",
+                  cotas_nota: "Cota Prata de patrocínio com garantia de exclusividade na categoria de saneamento.",
+                  
+                  custo_beneficio_nota: "Custo por beneficiário direto de R$ 12,00 por participante com alto engajamento em comunidades locais.",
+                  clareza_nota: "Regulamento claro da prova aprovado pela Federação e plano financeiro simplificado.",
+                  
+                  capacidade_execucao_nota: "Equipe com histórico de 6 eventos de corrida realizados sem intercorrências graves.",
+                  orcamento_nota: "Orçamento ajustado de acordo com a tabela de referência de custos esportivos do estado."
+                }
+              },
+
+              // Perfil 3: Projeto Socioambiental do Interior (~750+ pts)
+              {
+                nome_perfil: "Projeto Socioambiental de Saneamento & Juventude",
+                data: {
+                  proponente: "Coletivo Guardiões dos Rios Mineiros",
+                  razao_social: "Coletivo Guardiões dos Rios e Nascentes de Minas Gerais",
+                  cnpj: "45.678.901/0001-22",
+                  rua: "Rua Sete de Setembro",
+                  numero: "89",
+                  complemento: "Casa da Sustentabilidade",
+                  bairro: "São Francisco",
+                  cidade: "Governador Valadares",
+                  estado: "MG",
+                  email: "guardioes@riosdeminas.org.br",
+                  redes_sociais: "Instagram, LinkedIn, YouTube, Outras",
+                  
+                  rep_nome: "Juliana Rocha Guimarães",
+                  rep_cpf: "456.789.012-33",
+                  rep_cargo: "Coordenadora Geral",
+                  rep_email: "juliana.guimaraes@riosdeminas.org.br",
+                  rep_telefone: "(33) 98844-5566",
+                  
+                  nome_projeto: "Programa Juventude Guardiã das Nascentes 2026",
+                  valor_solicitado: "120000.00",
+                  local_realizacao: "Governador Valadares, Teófilo Otoni e Ipatinga",
+                  periodo_execucao: "15/04/2026 a 15/12/2026",
+                  lei_incentivo: "Sim",
+                  codigo_aprovacao: "FEC-MG-2026-1092",
+                  valor_aprovacao: "120000.00",
+                  artigo: "Artigo 12",
+                  objetivo: "Formar 500 jovens da rede pública em agentes ambientais para recuperação e monitoramento de 20 nascentes na bacia do Rio Doce.",
+                  
+                  banco: "Sicoob",
+                  agencia: "3102",
+                  conta: "44556-7",
+                  
+                  meta_publico_nota: "Formação direta de 500 jovens monitores e alcance indireto em 15.000 moradores de comunidades rurais.",
+                  historico_nota: "ONG atuante há 8 anos na Bacia do Rio Doce com premiações socioambientais no Vale do Rio Doce e Mucuri.",
+                  abrangencia_nota: "Execução focada em 3 grandes municípios do Leste de Minas fortemente atendidos pela COPASA.",
+                  contrapartidas_nota: "Placas comemorativas de revitalização das nascentes com a marca COPASA e destaque em todo o material técnico impresso.",
+                  
+                  beneficiarios_diretos_nota: "500 adolescentes e jovens entre 14 e 21 anos em situação de vulnerabilidade social.",
+                  beneficiarios_indiretos_nota: "Famílias e agricultores familiares beneficiados pela recuperação da vazão de água das nascentes.",
+                  educacao_nota: "Curso de extensão de 80 horas/aula cobrindo recursos hídricos, saneamento rural e reflorestamento.",
+                  saude_nota: "Ações de análise simplificada da qualidade da água potável e proteção de poços artesianos rurais.",
+                  inclusao_nota: "Priorização de 60% das vagas para jovens mulheres e residentes em comunidades rurais periféricas.",
+                  esg_nota: "Plantio direto de 5.000 mudas de árvores nativas da Mata Atlântica e cercamento de 20 nascentes degradadas.",
+                  diferencial_artistico_nota: "Elaboração de cartilhas ilustradas por artistas locais e concurso de fotografia ambiental entre os alunos.",
+                  diferencial_social_nota: "Capacitação profissional que gera oportunidade de trabalho como auxiliares de monitoramento ambiental.",
+                  diferencial_originalidade_nota: "Uso de aplicativo mobile gratuito para mapeamento colaborativo de nascentes degradadas.",
+                  diferencial_tecnico_nota: "Metodologia desenvolvida em parceria com o Instituto de Florestas de Minas Gerais e UFVJM.",
+                  diferencial_relacionamento_nota: "Ações de campo conjuntas reunindo técnicos da COPASA e jovens líderes comunitários.",
+                  interesse_coletivo_nota: "Proteção direta dos mananciais responsáveis pelo abastecimento de água potável nas cidades atendidas.",
+                  
+                  plano_comunicacao_nota: "Campanha focada em rádios comunitárias, jornais regionais, redes sociais e vídeos curtos no YouTube.",
+                  redes_sociais_nota: "Instagram, LinkedIn, YouTube, Outras",
+                  monitoramento_nota: "Relatórios trimestrais de evolução do plantio, vazão de água nas nascentes e avaliações dos estudantes.",
+                  conteudo_institucional_nota: "Espaço dedicado no portal do projeto para notícias das ações da COPASA na região do Vale do Rio Doce.",
+                  conteudo_institucional_tipo: "Portal / Podcast",
+                  ativacoes_marca_nota: "Cerimônias de entrega de certificados e inauguração das nascentes recuperadas com faixa da COPASA.",
+                  direitos_imagem_nota: "Autorização completa de uso das fotos e vídeos das atividades em campo para relatórios de sustentabilidade da COPASA.",
+                  contrapartida_imagem_nota: "Logomarca em todas as cartilhas impressas, camisetas do projeto e placas de proteção de nascente.",
+                  site_oficial_nota: "Página dedicada com histórico do patrocínio e depoimento dos jovens capacitados.",
+                  exibicao_video_nota: "Minidocumentário de 5 minutos sobre a recuperação das nascentes destacando a parceria COPASA.",
+                  citacao_releases_nota: "Mencionar a COPASA como parceira estratégica em todas as matérias de imprensa enviadas para veículos da região.",
+                  
+                  voluntariado_corporativo_nota: "Dia de Campo 'COPASA na Nascente' convidando empregados para participarem do plantio simbólico de mudas.",
+                  datas_comemorativas_nota: "Comemorações no Dia da Árvore e Dia Nacional da Conservação do Solo com eventos abertos à imprensa.",
+                  engajamento_comunitario_nota: "Envolvimento dos proprietários rurais onde ficam as nascentes e das associações de moradores.",
+                  
+                  inclusao_material: "Entrega de kit de monitoramento ambiental com caderno pedagógico com a marca COPASA.",
+                  cessao_convites: "Convites para diretoria e corpo técnico participarem do seminário final de apresentação dos resultados.",
+                  estande: "Estande informativo durante o Seminário Regional de Recursos Hídricos.",
+                  palestrantes: "Participação de técnico especializado da COPASA no módulo sobre Tratamento de Água e Esgoto.",
+                  cortesias_escolas: "Distribuição gratuita de 2.000 exemplares da cartilha socioambiental em escolas rurais.",
+                  citacao_evento: "Reconhecimento institucional da COPASA em todas as solenidades públicas e seminários.",
+                  
+                  captacao_nota: "Projeto com 60% de recursos pré-garantidos pelo Fundo de Recuperação de Bacias Hidrográficas.",
+                  execucao_garantida_nota: "Garantia de atendimento a pelo menos 10 nascentes principais caso a captação não atinja 100%.",
+                  cotas_nota: "Patrocínio Apresenta para a categoria de preservação de recursos hídricos.",
+                  
+                  custo_beneficio_nota: "Custo por jovem capacitado de R$ 240,00 incluindo 80h de aula, transporte, alimentação e uniforme.",
+                  clareza_nota: "Matriz de indicadores de impacto socioambiental quantitativos bem definidos.",
+                  
+                  capacidade_execucao_nota: "Equipe pedagógica e florestal com mais de 8 anos de experiência na Bacia do Rio Doce.",
+                  orcamento_nota: "Cotação prévia realizada junto aos viveiros regionais e fornecedores de insumos agrícolas."
+                }
+              }
+            ];
+
+            // Sortear aleatoriamente 1 dos 3 perfis
+            var randomIndex = Math.floor(Math.random() * mockProfiles.length);
+            var selectedProfile = mockProfiles[randomIndex];
+            var mockData = selectedProfile.data;
+
+            for (var key in mockData) {
+              var el = form.querySelector('[name="' + key + '"]');
+              if (el) {
+                el.value = mockData[key];
+                var groupEl = el.closest(".mp-field-group");
+                if (groupEl) groupEl.classList.add("mp-has-value");
+              }
+            }
+
+            // Atualizar os componentes de multiselect customizados se existirem
+            form.querySelectorAll(".mp-multiselect").forEach(function(msWrapper) {
+              var hiddenInput = msWrapper.parentElement.querySelector('input[type="hidden"]');
+              if (hiddenInput && mockData[hiddenInput.name]) {
+                var valStr = mockData[hiddenInput.name];
+                hiddenInput.value = valStr;
+                var selectedArr = valStr.split(", ");
+                
+                var labelSpan = msWrapper.querySelector(".mp-multiselect-label");
+                if (labelSpan) {
+                  labelSpan.textContent = valStr;
+                  labelSpan.style.color = "#0f172a";
+                  labelSpan.style.fontSize = "0.81rem";
+                }
+
+                msWrapper.querySelectorAll(".mp-multiselect-option").forEach(function(optRow) {
+                  var textSpan = optRow.querySelector("span");
+                  if (textSpan && selectedArr.includes(textSpan.textContent.trim())) {
+                    optRow.classList.add("mp-selected");
+                  } else {
+                    optRow.classList.remove("mp-selected");
+                  }
+                });
+              }
+            });
+
+            checkForm();
+            atualizarScore();
+            showToast("Sorteado: " + selectedProfile.nome_perfil + "!", "success");
+          });
+        }
 
         document.querySelectorAll(".mp-btn").forEach(function (btn) {
           btn.addEventListener("click", function (e) {
