@@ -26,6 +26,10 @@ app.include_router(auth.router)
 app.include_router(planilha.router)
 app.include_router(ai.router)
 
+@app.get("/health", status_code=200)
+async def health_check():
+    return {"status": "ok", "message": "Service is healthy"}
+
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
     return Response(status_code=204)

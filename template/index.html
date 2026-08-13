@@ -1013,21 +1013,22 @@
             title: "Dados do Representante Legal",
             fields: [
               { id: "rep_nome", label: "Nome", type: "text", required: true },
-              { id: "rep_cargo", label: "Cargo ou Função", type: "text" },
+              { id: "rep_cargo", label: "Cargo ou Função", type: "text", required: true },
               {
                 id: "rep_documento",
                 label: "Documento de Identidade",
                 type: "text",
+                required: true,
               },
-              { id: "rep_telefone", label: "Telefone (com DDD)", type: "text" },
-              { id: "rep_celular", label: "Celular (com DDD)", type: "text" },
+              { id: "rep_telefone", label: "Telefone (com DDD)", type: "text", required: true },
+              { id: "rep_celular", label: "Celular (com DDD)", type: "text", required: true },
               { id: "rep_email", label: "E-mail", type: "email", required: true },
             ],
           },
           {
             title: "Informações do Projeto",
             fields: [
-              { id: "lei_incentivo", label: "Lei de Incentivo", type: "text" },
+              { id: "lei_incentivo", label: "Lei de Incentivo", type: "text", required: true },
               {
                 id: "nome_projeto",
                 label: "Nome do Projeto",
@@ -1038,11 +1039,13 @@
                 id: "codigo_aprovacao",
                 label: "Código de Aprovação",
                 type: "text",
+                required: true,
               },
               {
                 id: "artigo_aprovacao",
                 label: "Artigo de Aprovação — Art 18 ou 26?",
                 type: "text",
+                required: true,
               },
               {
                 id: "data_publicacao",
@@ -1063,6 +1066,7 @@
                 id: "valor_total_aprovacao",
                 label: "Valor Total da Aprovação",
                 type: "text",
+                required: true,
               },
               {
                 id: "valor_solicitado_aporte",
@@ -1074,13 +1078,14 @@
                 id: "local_realizacao",
                 label: "Local de Realização",
                 type: "text",
+                required: true,
               },
               {
                 id: "periodo_realizacao",
                 label: "Período de Realização do Projeto",
                 type: "text",
               },
-              { id: "objetivo", label: "Objetivo", type: "textarea", required: true },
+              { id: "objetivo", label: "Objetivo", type: "textarea" },
               {
                 id: "publico_alvo",
                 label: "Público Alvo do Projeto",
@@ -1097,10 +1102,10 @@
           {
             title: "Dados Bancários do Projeto",
             fields: [
-              { id: "banco", label: "Banco", type: "text" },
-              { id: "agencia", label: "Agência", type: "text" },
-              { id: "conta_corrente", label: "Conta Corrente", type: "text" },
-              { id: "operacao", label: "Operação", type: "text" },
+              { id: "banco", label: "Banco", type: "text", required: true },
+              { id: "agencia", label: "Agência", type: "text", required: true },
+              { id: "conta_corrente", label: "Conta Corrente", type: "text", required: true },
+              { id: "operacao", label: "Operação", type: "text", required: true },
             ],
           },
           {

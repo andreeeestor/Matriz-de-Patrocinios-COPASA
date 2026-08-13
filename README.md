@@ -352,7 +352,7 @@ A API backend está implantada no serviço **Render**:
 ### Prevenção de "Sleep" (Free Tier)
 Como o plano gratuito do Render hiberna após 15 minutos sem uso, utilize o **UptimeRobot**:
 1. Cadastre-se em [uptimerobot.com](https://uptimerobot.com/).
-2. Adicione um monitor **HTTP(s)** apontando para `https://matriz-patrocinios-copasa.onrender.com/`.
+2. Adicione um monitor **HTTP(s)** apontando para `https://matriz-patrocinios-copasa.onrender.com/health`.
 3. Defina o intervalo de verificação para **5 minutos**.
 
 ---
