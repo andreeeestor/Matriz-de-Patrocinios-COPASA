@@ -69,17 +69,30 @@ def extrair_dados_planilha(file_bytes: bytes) -> dict:
         dados_extraidos[campo] = val
 
         if campo.endswith("_nota"):
-            try:
-                nota_num = float(val) if val is not None else 0.0
-            except (ValueError, TypeError):
-                nota_num = 0.0
+            nota_num = 0.0
+            if val is not None:
+                if isinstance(val, (int, float)):
+                    nota_num = float(val)
+                elif isinstance(val, str) and val.strip() != "":
+                    # Tentar converter direto ou extrair o primeiro número
+                    val_clean = val.replace(",", ".").strip()
+                    try:
+                        nota_num = float(val_clean)
+                    except ValueError:
+                        import re
+                        match = re.search(r"(\d+(?:\.\d+)?)", val_clean)
+                        if match:
+                            nota_num = float(match.group(1))
+                        else:
+                            # Se for uma descrição de texto sem número fixo, atribuir a nota máxima do critério para a análise da planilha
+                            nota_num = float(MAX_SCORES.get(campo, 20))
             
             nota_max = MAX_SCORES.get(campo, 20)
             notas_criterios[campo] = {
                 "nota_obtida": nota_num,
                 "nota_maxima": nota_max,
                 "gap": max(0.0, nota_max - nota_num),
-                "observacao": ws.cell(row=linha, column=coluna + 1).value or ""
+                "observacao": ws.cell(row=linha, column=coluna + 1).value or (val if isinstance(val, str) else "")
             }
             pontuacao_total += nota_num
 
