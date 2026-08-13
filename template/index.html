@@ -349,6 +349,7 @@
       }
       #mp-root .mp-section-body-inner {
         padding: 22px 26px;
+        overflow: visible;
       }
       #mp-root .mp-section-grid {
         display: grid;
@@ -567,12 +568,15 @@
       #mp-root .mp-multiselect.mp-open .mp-multiselect-arrow {
         transform: rotate(180deg);
       }
+      #mp-root .mp-multiselect.mp-open {
+        z-index: 999;
+      }
       #mp-root .mp-multiselect-dropdown {
         position: absolute;
         top: 100%;
         left: 0;
         right: 0;
-        z-index: 100;
+        z-index: 9999;
         background: #ffffff;
         border: 1px solid #cbd5e1;
         border-top: none;
@@ -914,8 +918,8 @@
               <span id="mpTotalScore" class="mp-score-number">0</span>
               <div class="mp-score-meta">
                 <span class="mp-score-meta-label">Pontuação Total</span>
-                <span id="mpAiBadgeTag" style="display: none; font-size: 0.65rem; color: #8b5cf6; font-weight: 600; margin-left: 6px; background: #f3e8ff; padding: 2px 6px; border-radius: 4px;">calculada pela IA</span>
-                <div class="mp-score-bar-outer">
+                <div id="mpAiNotice" style="font-size: 0.68rem; color: #64748b; font-weight: 500; margin-top: 2px;">(Pontuação calculada pela IA)</div>
+                <div class="mp-score-bar-outer" style="margin-top: 4px;">
                   <div id="mpScoreBarFill" class="mp-score-bar-inner"></div>
                 </div>
               </div>
@@ -935,9 +939,10 @@
             </button>
             <button
               type="button"
-              id="mpAvaliarFormBtn"
-              class="mp-btn mp-enabled"
-              style="background: #8b5cf6; color: #ffffff; min-width: 180px;"
+              id="mpVerificarPontuacaoBtn"
+              class="mp-btn"
+              disabled
+              style="background: #8b5cf6; color: #ffffff; opacity: 0.5; cursor: not-allowed; min-width: 170px;"
             >
               <span class="mp-btn-text">Verificar Pontuação</span>
               <span class="mp-spinner"></span>
@@ -1416,8 +1421,16 @@
               {
                 id: "redes_sociais_nota",
                 label: "Redes Sociais",
-                type: "textarea",
-                placeholder: "Descreva a estratégia nas redes sociais e alcance estimado...",
+                type: "multiselect",
+                options: [
+                  "Instagram",
+                  "Facebook",
+                  "LinkedIn",
+                  "YouTube",
+                  "TikTok",
+                  "X / Twitter",
+                  "Outras"
+                ]
               },
               {
                 id: "monitoramento_nota",
@@ -1658,7 +1671,7 @@
 
               var msHeader = document.createElement("div");
               msHeader.className = "mp-multiselect-header";
-              msHeader.innerHTML = '<span class="mp-multiselect-label" style="color: #94a3b8;">Selecione as redes sociais...</span><svg class="mp-multiselect-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+              msHeader.innerHTML = '<span class="mp-multiselect-label" style="font-size: 0.78rem; color: #94a3b8;">Selecione as opções...</span><svg class="mp-multiselect-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
 
               var msDropdown = document.createElement("div");
               msDropdown.className = "mp-multiselect-dropdown";
@@ -1686,10 +1699,12 @@
                   if (selectedValues.length > 0) {
                     labelSpan.textContent = selectedValues.join(", ");
                     labelSpan.style.color = "#0f172a";
+                    labelSpan.style.fontSize = "0.81rem";
                     group.classList.add("mp-has-value");
                   } else {
-                    labelSpan.textContent = "Selecione as redes sociais...";
+                    labelSpan.textContent = "Selecione as opções...";
                     labelSpan.style.color = "#94a3b8";
+                    labelSpan.style.fontSize = "0.78rem";
                     group.classList.remove("mp-has-value");
                   }
                   checkForm();
@@ -1736,47 +1751,49 @@
               input = document.createElement("input");
               input.type = field.type || "text";
             }
-            input.id = field.id;
-            input.name = field.id;
-            if (field.required) input.required = true;
-            if (field.step) input.step = field.step;
+            if (field.type !== "multiselect") {
+              input.id = field.id;
+              input.name = field.id;
+              if (field.required) input.required = true;
+              if (field.step) input.step = field.step;
 
-            if (maxScore !== undefined) {
-              input.min = 0;
-              input.max = maxScore;
-            }
+              if (maxScore !== undefined) {
+                input.min = 0;
+                input.max = maxScore;
+              }
 
-            input.addEventListener("input", function () {
-              if (maxScore !== undefined && this.value !== "") {
-                var val = parseFloat(this.value.toString().replace(",", "."));
-                if (!isNaN(val)) {
-                  if (val > maxScore) {
-                    this.value = maxScore;
-                  } else if (val < 0) {
-                    this.value = 0;
+              input.addEventListener("input", function () {
+                if (maxScore !== undefined && this.value !== "") {
+                  var val = parseFloat(this.value.toString().replace(",", "."));
+                  if (!isNaN(val)) {
+                    if (val > maxScore) {
+                      this.value = maxScore;
+                    } else if (val < 0) {
+                      this.value = 0;
+                    }
                   }
                 }
-              }
 
-              var isInvalid = false;
-              if (field.required && this.value.trim() === "") {
-                isInvalid = true;
-              } else if (field.type === "email" && this.value.trim() !== "") {
-                var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(this.value.trim())) {
+                var isInvalid = false;
+                if (field.required && this.value.trim() === "") {
                   isInvalid = true;
+                } else if (field.type === "email" && this.value.trim() !== "") {
+                  var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                  if (!emailRegex.test(this.value.trim())) {
+                    isInvalid = true;
+                  }
                 }
-              }
 
-              this.classList.toggle("mp-invalid", isInvalid);
-              group.classList.toggle("mp-has-value", this.value.trim() !== "");
-              checkForm();
-              atualizarScore();
-            });
-            input.addEventListener("change", function () {
-              checkForm();
-              atualizarScore();
-            });
+                this.classList.toggle("mp-invalid", isInvalid);
+                group.classList.toggle("mp-has-value", this.value.trim() !== "");
+                checkForm();
+                atualizarScore();
+              });
+              input.addEventListener("change", function () {
+                checkForm();
+                atualizarScore();
+              });
+            }
 
             group.appendChild(input);
 
@@ -1938,17 +1955,46 @@
 
         function checkForm() {
           var required = form.querySelectorAll("[required]");
-          var filled = 0;
+          var filledRequired = 0;
           required.forEach(function (inp) {
-            if (inp.value.trim() !== "") filled++;
+            if (inp.value.trim() !== "") filledRequired++;
           });
-          var pct = required.length > 0 ? (filled / required.length) * 100 : 0;
+
+          // Verificar se há pelo menos um campo de pontuação preenchido (seções 3 a 7)
+          var scoreFieldsFilled = 0;
+          sectionsData.forEach(function(sec, idx) {
+            if (idx >= 2) { // seções com critérios de nota
+              sec.fields.forEach(function(f) {
+                var el = form.querySelector('[name="' + f.id + '"]');
+                if (el && el.value.trim() !== "") scoreFieldsFilled++;
+              });
+            }
+          });
+
+          var pct = required.length > 0 ? (filledRequired / required.length) * 100 : 0;
           progress.style.width = pct + "%";
 
-          if (filled === required.length && required.length > 0) {
+          var isRequiredValid = (filledRequired === required.length && required.length > 0);
+          
+          if (isRequiredValid) {
             gerarBtn.classList.add("mp-enabled");
           } else {
             gerarBtn.classList.remove("mp-enabled");
+          }
+
+          var verificarBtn = document.getElementById("mpVerificarPontuacaoBtn");
+          if (verificarBtn) {
+            if (isRequiredValid && scoreFieldsFilled > 0) {
+              verificarBtn.disabled = false;
+              verificarBtn.classList.add("mp-enabled");
+              verificarBtn.style.opacity = "1";
+              verificarBtn.style.cursor = "pointer";
+            } else {
+              verificarBtn.disabled = true;
+              verificarBtn.classList.remove("mp-enabled");
+              verificarBtn.style.opacity = "0.5";
+              verificarBtn.style.cursor = "not-allowed";
+            }
           }
         }
 
@@ -2236,11 +2282,13 @@
           }
         });
 
-        var avaliarFormBtn = document.getElementById("mpAvaliarFormBtn");
+        var verificarPontuacaoBtn = document.getElementById("mpVerificarPontuacaoBtn");
         var exportPdfBtn = document.getElementById("mpExportPdfBtn");
 
-        if (avaliarFormBtn) {
-          avaliarFormBtn.addEventListener("click", async function () {
+        if (verificarPontuacaoBtn) {
+          verificarPontuacaoBtn.addEventListener("click", async function () {
+            if (this.disabled) return;
+
             var token = sessionStorage.getItem("mp_token");
             var formData = new FormData(form);
             var data = {};
@@ -2257,7 +2305,7 @@
             }
 
             this.classList.add("mp-loading");
-            showToast("Avaliando formulário com a IA Groq...", "info");
+            showToast("Verificando pontuação com a IA...", "info");
 
             try {
               var res = await fetch(API_BASE + "/ai/avaliar-formulario", {
@@ -2278,22 +2326,25 @@
 
               var resultData = await res.json();
               if (res.ok && resultData.sucesso) {
-                // Preencher automaticamente os valores calculados pela IA nos campos e observações do formulário
-                var notasMap = resultData.notas_atribuidas || {};
-                for (var key in notasMap) {
-                  var inputEl = form.querySelector('[name="' + key + '"]');
-                  if (inputEl) {
-                    inputEl.value = notasMap[key];
-                    var groupEl = inputEl.closest(".mp-field-group");
-                    if (groupEl) groupEl.classList.add("mp-has-value");
-                  }
-                }
-                
-                checkForm();
-                atualizarScore();
+                // Atualizar APENAS a pontuação total no painel (SEM alterar nenhum input/textarea)
+                var scoreTotalIA = resultData.pontuacao_total_obtida || 0;
+                var current = parseFloat(totalSpan.textContent) || 0;
+                animNumber(totalSpan, current, scoreTotalIA, 150);
 
-                var aiBadge = document.getElementById("mpAiBadgeTag");
-                if (aiBadge) aiBadge.style.display = "inline-block";
+                var cls = getClass(scoreTotalIA);
+                classSpan.textContent = cls.label;
+                classSpan.style.color = cls.color;
+                classSpan.style.background = cls.bg;
+                classSpan.style.borderColor = cls.border;
+                classSpan.style.border = "1px solid " + cls.border;
+
+                barFill.style.width = Math.min((scoreTotalIA / TOTAL_MAX_SCORE) * 100, 100) + "%";
+
+                var noticeEl = document.getElementById("mpAiNotice");
+                if (noticeEl) {
+                  noticeEl.style.display = "block";
+                  noticeEl.textContent = "(Pontuação calculada pela IA)";
+                }
 
                 // Renderizar a análise no container diagnóstico
                 renderAiResult({
@@ -2308,11 +2359,11 @@
                       if (typeof item === 'string') return { criterio: "Melhoria Recomendada", nota_atual: "-", nota_maxima: "-", recomendacao: item };
                       return item;
                     }),
-                    conclusao: "Pontuação Total Atribuída pela IA: " + resultData.pontuacao_total_obtida + " de " + resultData.pontuacao_maxima_possivel + " pontos."
+                    conclusao: "Pontuação Total Calculada pela IA: " + scoreTotalIA + " de " + resultData.pontuacao_maxima_possivel + " pontos."
                   }
                 });
 
-                showToast("Avaliação concluída! Pontuação calculada pela IA.", "success");
+                showToast("Pontuação calculada com sucesso pela IA!", "success");
                 var resultContainer = document.getElementById("mpAiResultContainer");
                 if (resultContainer) resultContainer.scrollIntoView({ behavior: 'smooth' });
               } else {
