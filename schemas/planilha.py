@@ -136,5 +136,8 @@ class PlanilhaData(BaseModel):
     cotas_nota: Optional[Any] = None
     cotas_obs: Optional[str] = None
 
+    # Resumo do Avaliador (IA) para o painel executivo da planilha
+    resumo_avaliador: Optional[str] = None
+
     class Config:
         extra = "allow"

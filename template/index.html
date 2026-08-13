@@ -2063,23 +2063,31 @@
                   
                   rep_nome: "Carlos Eduardo Silva",
                   rep_cpf: "123.456.789-00",
+                  rep_documento: "MG-12.345.678 SSP/MG",
                   rep_cargo: "Diretor Executivo",
                   rep_email: "carlos.silva@aguasevida.org.br",
-                  rep_telefone: "(31) 98765-4321",
+                  rep_telefone: "(31) 3333-4444",
+                  rep_celular: "(31) 98765-4321",
                   
                   nome_projeto: "Festival Internacional das Águas & Sustentabilidade 2026",
                   valor_solicitado: "250000.00",
+                  valor_solicitado_aporte: "250000.00",
+                  valor_total_aprovacao: "250000.00",
                   local_realizacao: "Belo Horizonte, Contagem e Betim",
                   periodo_execucao: "10/05/2026 a 20/10/2026",
-                  lei_incentivo: "Sim",
+                  periodo_realizacao: "10/05/2026 a 20/10/2026",
+                  lei_incentivo: "Lei Federal de Incentivo à Cultura",
                   codigo_aprovacao: "PRONAC-2026-8890",
                   valor_aprovacao: "250000.00",
                   artigo: "Artigo 18",
+                  artigo_aprovacao: "Artigo 18",
                   objetivo: "Promover a conscientização sobre a preservação dos recursos hídricos através de apresentações culturais gratuitas, exposições imersivas e oficinas ambientais de alto impacto.",
                   
                   banco: "Banco do Brasil",
                   agencia: "1234-5",
                   conta: "98765-4",
+                  conta_corrente: "98765-4",
+                  operacao: "001",
                   
                   meta_publico_nota: "Previsão de 50.000 participantes presenciais ao longo dos 7 dias de festival e mais de 200.000 espectadores no transmissão virtual.",
                   historico_nota: "Instituição com mais de 15 anos de atuação ininterrupta na gestão cultural e ambiental em Minas Gerais, com prêmios nacionais.",
@@ -2152,23 +2160,31 @@
                   
                   rep_nome: "Mariana Alvares Mendes",
                   rep_cpf: "987.654.321-11",
+                  rep_documento: "M-9.876.543 PC/MG",
                   rep_cargo: "Coordenadora de Projetos",
                   rep_email: "mariana.mendes@esporteparatodos.org.br",
-                  rep_telefone: "(31) 99123-8877",
+                  rep_telefone: "(31) 3222-1100",
+                  rep_celular: "(31) 99123-8877",
                   
                   nome_projeto: "Circuito Corridão das Águas & Cidadania",
                   valor_solicitado: "90000.00",
+                  valor_solicitado_aporte: "90000.00",
+                  valor_total_aprovacao: "90000.00",
                   local_realizacao: "Montes Claros e Uberaba",
                   periodo_execucao: "01/06/2026 a 15/11/2026",
-                  lei_incentivo: "Sim",
+                  periodo_realizacao: "01/06/2026 a 15/11/2026",
+                  lei_incentivo: "Lei Estadual de Incentivo ao Esporte",
                   codigo_aprovacao: "LIE-MG-2026-4412",
                   valor_aprovacao: "90000.00",
                   artigo: "Artigo 27",
+                  artigo_aprovacao: "Artigo 27",
                   objetivo: "Promover corridas de rua populares e oficinas esportivas para jovens de baixa renda, incentivando hábitos saudáveis.",
                   
                   banco: "Caixa Econômica Federal",
                   agencia: "0088-1",
                   conta: "12345-6",
+                  conta_corrente: "12345-6",
+                  operacao: "003",
                   
                   meta_publico_nota: "Estimativa de 3.500 corredores inscritos e cerca de 10.000 visitantes na arena das provas.",
                   historico_nota: "Organização comunitária criada em 2018 com histórico de 6 corridas rurais e urbanas realizadas no interior de Minas.",
@@ -2241,23 +2257,31 @@
                   
                   rep_nome: "Juliana Rocha Guimarães",
                   rep_cpf: "456.789.012-33",
+                  rep_documento: "MG-15.987.654 SSP/MG",
                   rep_cargo: "Coordenadora Geral",
                   rep_email: "juliana.guimaraes@riosdeminas.org.br",
-                  rep_telefone: "(33) 98844-5566",
+                  rep_telefone: "(33) 3271-8899",
+                  rep_celular: "(33) 98844-5566",
                   
                   nome_projeto: "Programa Juventude Guardiã das Nascentes 2026",
                   valor_solicitado: "120000.00",
+                  valor_solicitado_aporte: "120000.00",
+                  valor_total_aprovacao: "120000.00",
                   local_realizacao: "Governador Valadares, Teófilo Otoni e Ipatinga",
                   periodo_execucao: "15/04/2026 a 15/12/2026",
-                  lei_incentivo: "Sim",
+                  periodo_realizacao: "15/04/2026 a 15/12/2026",
+                  lei_incentivo: "Fundo Estadual de Cultura / Meio Ambiente",
                   codigo_aprovacao: "FEC-MG-2026-1092",
                   valor_aprovacao: "120000.00",
                   artigo: "Artigo 12",
+                  artigo_aprovacao: "Artigo 12",
                   objetivo: "Formar 500 jovens da rede pública em agentes ambientais para recuperação e monitoramento de 20 nascentes na bacia do Rio Doce.",
                   
                   banco: "Sicoob",
                   agencia: "3102",
                   conta: "44556-7",
+                  conta_corrente: "44556-7",
+                  operacao: "001",
                   
                   meta_publico_nota: "Formação direta de 500 jovens monitores e alcance indireto em 15.000 moradores de comunidades rurais.",
                   historico_nota: "ONG atuante há 8 anos na Bacia do Rio Doce com premiações socioambientais no Vale do Rio Doce e Mucuri.",
@@ -2399,6 +2423,30 @@
           var data = {};
           for (var pair of formData.entries()) {
             data[pair[0]] = pair[1];
+          }
+
+          // Se a IA já avaliou, sobrescrever _nota com pontuação numérica da IA
+          // e mover as descrições textuais para os campos _obs correspondentes
+          if (aiNotasAtribuidas) {
+            Object.keys(aiNotasAtribuidas).forEach(function(k) {
+              if (k.endsWith("_nota")) {
+                var obsKey = k.replace("_nota", "_obs");
+                // Mover descrição original para obs se não houver obs explícita
+                if (data[k] && typeof data[k] === 'string' && isNaN(parseFloat(data[k]))) {
+                  if (!data[obsKey]) data[obsKey] = data[k];
+                }
+                // Substituir nota pelo valor numérico da IA
+                data[k] = aiNotasAtribuidas[k];
+              } else if (k.endsWith("_obs")) {
+                // Preencher obs com justificativa da IA se não houver obs própria
+                if (!data[k] && aiNotasAtribuidas[k]) data[k] = aiNotasAtribuidas[k];
+              }
+            });
+          }
+
+          // Incluir resumo do avaliador na planilha
+          if (aiResumoAvaliador) {
+            data["resumo_avaliador"] = aiResumoAvaliador;
           }
 
           try {
@@ -2617,6 +2665,9 @@
 
         var verificarPontuacaoBtn = document.getElementById("mpVerificarPontuacaoBtn");
         var exportPdfBtn = document.getElementById("mpExportPdfBtn");
+        // Armazena as notas atribuídas pela IA e o resumo para injetar na planilha
+        var aiNotasAtribuidas = null;
+        var aiResumoAvaliador = null;
 
         if (verificarPontuacaoBtn) {
           verificarPontuacaoBtn.addEventListener("click", async function () {
@@ -2659,6 +2710,10 @@
 
               var resultData = await res.json();
               if (res.ok && resultData.sucesso) {
+                // Salvar notas e resumo da IA para injetar na planilha
+                aiNotasAtribuidas = resultData.notas_atribuidas || null;
+                aiResumoAvaliador = resultData.resumo_avaliador || null;
+
                 // Atualizar APENAS a pontuação total no painel (SEM alterar nenhum input/textarea)
                 var scoreTotalIA = resultData.pontuacao_total_obtida || 0;
                 var current = parseFloat(totalSpan.textContent) || 0;
@@ -2684,6 +2739,8 @@
                   dados_extraidos: {
                     nome_projeto: data.nome_projeto || "Projeto de Patrocínio",
                     proponente: data.proponente || "Proponente",
+                    pontuacao_total_obtida: scoreTotalIA,
+                    pontuacao_maxima_possivel: resultData.pontuacao_maxima_possivel || 1000,
                   },
                   analise_ia: {
                     resumo_executivo: resultData.resumo_avaliador || "Avaliação detalhada realizada pelo comitê de Inteligência Artificial da COPASA.",
@@ -2692,7 +2749,7 @@
                       if (typeof item === 'string') return { criterio: "Melhoria Recomendada", nota_atual: "-", nota_maxima: "-", recomendacao: item };
                       return item;
                     }),
-                    conclusao: "Pontuação Total Calculada pela IA: " + scoreTotalIA + " de " + resultData.pontuacao_maxima_possivel + " pontos."
+                    conclusao: "Pontuação Total Calculada pela IA: " + scoreTotalIA + " de " + (resultData.pontuacao_maxima_possivel || 1000) + " pontos."
                   }
                 });
 
@@ -2740,32 +2797,109 @@
           container.style.display = "block";
 
           var ia = data.analise_ia || {};
-          var html = '<div style="font-size: 0.95rem; color: #334155; line-height: 1.6;">';
-          html += '<p style="margin-bottom: 12px; background: #f8fafc; padding: 12px; border-radius: 8px;"><strong>Projeto:</strong> ' + data.dados_extraidos.nome_projeto + ' (' + data.dados_extraidos.proponente + ')</p>';
-          html += '<p style="margin-bottom: 16px;"><strong>Resumo Executivo:</strong> ' + (ia.resumo_executivo || "N/A") + '</p>';
+          var de = data.dados_extraidos || {};
+          var scoreTotal = de.pontuacao_total_obtida || 0;
+          var scoreMax = de.pontuacao_maxima_possivel || 1000;
+          var pct = Math.min(Math.round((scoreTotal / scoreMax) * 100), 100);
+          var barColor = pct >= 80 ? "#16a34a" : pct >= 60 ? "#0284c7" : pct >= 40 ? "#f59e0b" : "#dc2626";
 
-          if (ia.pontos_fortes && ia.pontos_fortes.length > 0) {
-            html += '<h4 style="color: #166534; font-weight: 700; margin-top: 16px;">Pontos Fortes</h4><ul>';
-            ia.pontos_fortes.forEach(function (pf) { html += '<li>' + pf + '</li>'; });
-            html += '</ul>';
+          // SVG icon helper
+          function icon(path, color) {
+            return '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="' + (color||"currentColor") + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-3px;margin-right:5px;"><path d="' + path + '"/></svg>';
           }
 
+          var html = '<div style="font-size: 0.92rem; color: #334155; line-height: 1.65;">';
+
+          // ── Cabeçalho
+          html += '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px 16px;margin-bottom:16px;">';
+          html += '<div style="font-weight:700;font-size:1rem;color:#0f172a;margin-bottom:4px;">';
+          html += icon("M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z", "#0284c7") + (de.nome_projeto || "Projeto de Patrocínio");
+          html += '</div>';
+          html += '<div style="color:#64748b;font-size:0.85rem;">' + icon("M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2", "#64748b") + (de.proponente || "Proponente") + '</div>';
+          html += '</div>';
+
+          // ── Tabela de Resumo Executivo
+          html += '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:14px 16px;margin-bottom:16px;">';
+          html += '<div style="font-weight:700;font-size:0.9rem;color:#1e293b;margin-bottom:10px;display:flex;align-items:center;gap:6px;">';
+          html += icon("M9 11l3 3L22 4", "#0284c7") + 'Resumo Executivo';
+          html += '</div>';
+          // Barra de pontuação
+          html += '<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">';
+          html += '<div style="flex:1;background:#f1f5f9;border-radius:99px;height:10px;overflow:hidden;">';
+          html += '<div style="width:' + pct + '%;height:100%;background:' + barColor + ';border-radius:99px;transition:width .6s;"></div>';
+          html += '</div>';
+          html += '<div style="font-weight:700;color:' + barColor + ';white-space:nowrap;font-size:0.95rem;">' + scoreTotal.toFixed(1) + ' / ' + scoreMax + ' pts (' + pct + '%)</div>';
+          html += '</div>';
+          // Tabela resumo por seção
+          html += '<table style="width:100%;border-collapse:collapse;font-size:0.85rem;">';
+          html += '<thead><tr style="background:#f8fafc;">';
+          html += '<th style="text-align:left;padding:7px 10px;border-bottom:1px solid #e2e8f0;color:#475569;font-weight:600;">Eixo de Avaliação</th>';
+          html += '<th style="text-align:center;padding:7px 10px;border-bottom:1px solid #e2e8f0;color:#475569;font-weight:600;">Pontuação IA</th>';
+          html += '<th style="text-align:center;padding:7px 10px;border-bottom:1px solid #e2e8f0;color:#475569;font-weight:600;">Máximo</th>';
+          html += '</tr></thead><tbody>';
+          var eixos = [
+            { label: "1. Alinhamento Estratégico", max: 60 },
+            { label: "2. Capacidade Institucional", max: 200 },
+            { label: "3. Impacto Social e ESG", max: 280 },
+            { label: "4. Comunicação e Marca", max: 330 },
+            { label: "5. Voluntariado", max: 75 },
+            { label: "6. Viabilidade Financeira", max: 75 }
+          ];
+          eixos.forEach(function(e, i) {
+            html += '<tr style="border-bottom:1px solid #f1f5f9;' + (i % 2 ? 'background:#fafafa;' : '') + '">';
+            html += '<td style="padding:7px 10px;color:#334155;">' + e.label + '</td>';
+            html += '<td style="padding:7px 10px;text-align:center;color:#0f172a;font-weight:600;">—</td>';
+            html += '<td style="padding:7px 10px;text-align:center;color:#64748b;">' + e.max + '</td>';
+            html += '</tr>';
+          });
+          html += '</tbody></table>';
+          if (ia.resumo_executivo) {
+            html += '<p style="margin-top:12px;color:#475569;font-style:italic;">' + ia.resumo_executivo + '</p>';
+          }
+          html += '</div>';
+
+          // ── Pontos Fortes
+          if (ia.pontos_fortes && ia.pontos_fortes.length > 0) {
+            html += '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px 16px;margin-bottom:16px;">';
+            html += '<div style="font-weight:700;font-size:0.9rem;color:#166534;margin-bottom:10px;display:flex;align-items:center;gap:6px;">';
+            html += icon("M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3", "#16a34a") + 'Pontos Fortes';
+            html += '</div><ul style="margin:0;padding-left:18px;">';
+            ia.pontos_fortes.forEach(function(pf) {
+              html += '<li style="margin-bottom:5px;color:#166534;">' + pf + '</li>';
+            });
+            html += '</ul></div>';
+          }
+
+          // ── Oportunidades de Melhoria
           if (ia.oportunidades_melhoria && ia.oportunidades_melhoria.length > 0) {
-            html += '<h4 style="color: #9a3412; font-weight: 700; margin-top: 16px;">Oportunidades de Melhoria / Parecer de Pontuação</h4>';
-            ia.oportunidades_melhoria.forEach(function (op) {
-              html += '<div style="background: #fff7ed; border-left: 4px solid #f97316; padding: 10px 14px; margin-top: 8px; border-radius: 4px;">';
+            html += '<div style="margin-bottom:16px;">';
+            html += '<div style="font-weight:700;font-size:0.9rem;color:#9a3412;margin-bottom:10px;display:flex;align-items:center;gap:6px;">';
+            html += icon("M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z", "#f97316") + 'Oportunidades de Melhoria';
+            html += '</div>';
+            ia.oportunidades_melhoria.forEach(function(op) {
+              html += '<div style="background:#fff7ed;border-left:4px solid #f97316;padding:10px 14px;margin-top:8px;border-radius:4px;">';
               if (op.nota_atual && op.nota_atual !== "-") {
-                html += '<strong>' + (op.criterio || "Critério") + '</strong> (Nota: ' + op.nota_atual + ' / Máx: ' + op.nota_maxima + ')<br/>';
+                html += '<div style="display:flex;justify-content:space-between;align-items:baseline;">';
+                html += '<strong style="color:#7c2d12;">' + (op.criterio || "Critério") + '</strong>';
+                html += '<span style="font-size:0.8rem;color:#9a3412;background:#ffedd5;padding:2px 8px;border-radius:99px;">Nota: ' + op.nota_atual + ' / ' + op.nota_maxima + '</span>';
+                html += '</div>';
               } else {
-                html += '<strong>' + (op.criterio || "Observação") + '</strong><br/>';
+                html += '<strong style="color:#7c2d12;">' + (op.criterio || "Observação") + '</strong>';
               }
-              html += '<span style="color: #475569;">' + op.recomendacao + '</span>';
+              html += '<p style="margin:6px 0 0;color:#475569;">' + (op.recomendacao || "") + '</p>';
               html += '</div>';
             });
+            html += '</div>';
           }
 
+          // ── Conclusão
           if (ia.conclusao) {
-            html += '<h4 style="font-weight: 700; margin-top: 16px;">📌 Conclusão</h4><p>' + ia.conclusao + '</p>';
+            html += '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:14px 16px;">';
+            html += '<div style="font-weight:700;font-size:0.9rem;color:#1d4ed8;margin-bottom:6px;display:flex;align-items:center;gap:6px;">';
+            html += icon("M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z", "#2563eb") + 'Conclusão';
+            html += '</div>';
+            html += '<p style="margin:0;color:#1e40af;">' + ia.conclusao + '</p>';
+            html += '</div>';
           }
 
           html += '</div>';

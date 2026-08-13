@@ -140,21 +140,55 @@ def parse_val(v):
             return 0.0
     return 0.0
 
+def _to_num_or_none(valor):
+    """Tenta converter valor para número. Retorna None se for texto puro (descrição)."""
+    if valor is None:
+        return None
+    if isinstance(valor, (int, float)):
+        return float(valor)
+    if isinstance(valor, str):
+        v = valor.replace(",", ".").strip()
+        try:
+            return float(v)
+        except ValueError:
+            return None  # É um texto descritivo — vai para a coluna Obs
+    return None
+
 def gerar_planilha(dados: dict) -> bytes:
     wb = load_workbook(settings.MODELO_PLANILHA)
     ws = wb.active
+
+    # Separar campos _nota que contêm texto (devem ir para Obs) dos que são numéricos
     for campo, valor in dados.items():
-        if campo in CELL_MAP and valor is not None:
-            linha, coluna = CELL_MAP[campo]
+        if campo not in CELL_MAP or valor is None:
+            continue
+
+        linha, coluna = CELL_MAP[campo]
+
+        if campo.endswith("_nota"):
+            num = _to_num_or_none(valor)
+            if num is not None:
+                # Valor numérico → coluna Nota (col 3)
+                cell_nota = ws.cell(row=linha, column=coluna)
+                if not isinstance(cell_nota, MergedCell):
+                    ws.cell(row=linha, column=coluna, value=num)
+            else:
+                # Texto descritivo → coluna Obs (col 4), não substituir Nota com texto
+                cell_obs = ws.cell(row=linha, column=coluna + 1)
+                if not isinstance(cell_obs, MergedCell):
+                    ws.cell(row=linha, column=coluna + 1, value=str(valor))
+        elif campo.endswith("_obs"):
+            # Observação explícita → sempre vai para coluna 4
             cell = ws.cell(row=linha, column=coluna)
             if not isinstance(cell, MergedCell):
-                if campo.endswith("_nota") and isinstance(valor, str) and valor.strip() != "":
-                    try:
-                        valor = float(valor) if ("." in valor or "," in valor) else int(valor)
-                    except ValueError:
-                        pass
+                ws.cell(row=linha, column=coluna, value=valor)
+        else:
+            # Campo de dados normais
+            cell = ws.cell(row=linha, column=coluna)
+            if not isinstance(cell, MergedCell):
                 ws.cell(row=linha, column=coluna, value=valor)
 
+    # Calcular subtotais por seção
     sec1_keys = ["valores_organizacionais_nota", "diversidade_inclusao_nota", "sustentabilidade_nota"]
     sec2_keys = ["portfolio_nota", "experiencia_incentivos_nota", "capacidade_tecnica_nota", "governanca_nota", "recursos_humanos_nota", "recursos_financeiros_nota", "experiencia_resultados_nota", "parcerias_nota"]
     sec3_keys = ["beneficiarios_diretos_nota", "beneficiarios_indiretos_nota", "educacao_nota", "saude_nota", "inclusao_nota", "esg_nota", "diferencial_artistico_nota", "diferencial_social_nota", "diferencial_originalidade_nota", "diferencial_tecnico_nota", "diferencial_relacionamento_nota", "interesse_coletivo_nota"]
@@ -162,12 +196,17 @@ def gerar_planilha(dados: dict) -> bytes:
     sec5_keys = ["voluntariado_corporativo_nota", "datas_comemorativas_nota", "engajamento_comunitario_nota"]
     sec6_keys = ["captacao_nota", "execucao_garantida_nota", "cotas_nota"]
 
-    s1 = sum(parse_val(dados.get(k)) for k in sec1_keys)
-    s2 = sum(parse_val(dados.get(k)) for k in sec2_keys)
-    s3 = sum(parse_val(dados.get(k)) for k in sec3_keys)
-    s4 = sum(parse_val(dados.get(k)) for k in sec4_keys)
-    s5 = sum(parse_val(dados.get(k)) for k in sec5_keys)
-    s6 = sum(parse_val(dados.get(k)) for k in sec6_keys)
+    def get_nota_num(k):
+        v = dados.get(k)
+        n = _to_num_or_none(v)
+        return n if n is not None else 0.0
+
+    s1 = sum(get_nota_num(k) for k in sec1_keys)
+    s2 = sum(get_nota_num(k) for k in sec2_keys)
+    s3 = sum(get_nota_num(k) for k in sec3_keys)
+    s4 = sum(get_nota_num(k) for k in sec4_keys)
+    s5 = sum(get_nota_num(k) for k in sec5_keys)
+    s6 = sum(get_nota_num(k) for k in sec6_keys)
 
     ws.cell(row=124, column=2, value=s1)
     ws.cell(row=125, column=2, value=s2)
@@ -178,6 +217,14 @@ def gerar_planilha(dados: dict) -> bytes:
 
     ws.cell(row=79, column=3, value='=SUM(C67:C78)')
     ws.cell(row=93, column=3, value='=SUM(C83:C92)')
+
+    # Escrever resumo do avaliador (IA) no painel executivo da planilha
+    resumo = dados.get("resumo_avaliador") or dados.get("resumo_executivo")
+    if resumo:
+        ws.cell(row=133, column=1, value="Parecer da IA")
+        cell_resumo = ws.cell(row=133, column=2)
+        if not isinstance(cell_resumo, MergedCell):
+            ws.cell(row=133, column=2, value=str(resumo))
 
     output = io.BytesIO()
     wb.save(output)
