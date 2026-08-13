@@ -8,7 +8,7 @@ from .planilha import CELL_MAP
 settings = get_settings()
 
 MAX_SCORES = {
-    "valores_organizacionais_nota": 20,  # Valor aproximado (não tem na planilha)
+    "valores_organizacionais_nota": 20,
     "diversidade_inclusao_nota": 20,
     "sustentabilidade_nota": 20,
     
@@ -21,37 +21,37 @@ MAX_SCORES = {
     "experiencia_resultados_nota": 25,
     "parcerias_nota": 25,
     
-    "beneficiarios_diretos_nota": 36,  # CORRIGIDO
-    "beneficiarios_indiretos_nota": 36,  # CORRIGIDO
-    "educacao_nota": 36,  # CORRIGIDO
-    "saude_nota": 36,  # CORRIGIDO
-    "inclusao_nota": 36,  # CORRIGIDO
-    "esg_nota": 36,  # CORRIGIDO
-    "diferencial_artistico_nota": 36,
-    "diferencial_social_nota": 36,
-    "diferencial_originalidade_nota": 36,
-    "diferencial_tecnico_nota": 36,
-    "diferencial_relacionamento_nota": 36,
-    "interesse_coletivo_nota": 0,  # Nota fixa 0 na planilha
+    "beneficiarios_diretos_nota": 25,
+    "beneficiarios_indiretos_nota": 24,
+    "educacao_nota": 24,
+    "saude_nota": 24,
+    "inclusao_nota": 24,
+    "esg_nota": 24,
+    "diferencial_artistico_nota": 23,
+    "diferencial_social_nota": 23,
+    "diferencial_originalidade_nota": 23,
+    "diferencial_tecnico_nota": 23,
+    "diferencial_relacionamento_nota": 23,
+    "interesse_coletivo_nota": 0,
     
-    "plano_comunicacao_nota": 33,  # CORRIGIDO
-    "redes_sociais_nota": 33,  # CORRIGIDO
-    "monitoramento_nota": 33,  # CORRIGIDO
-    "conteudo_institucional_nota": 33,  # CORRIGIDO
-    "ativacoes_marca_nota": 33,  # CORRIGIDO
-    "direitos_imagem_nota": 33,  # CORRIGIDO
-    "contrapartida_imagem_nota": 33,  # CORRIGIDO
-    "site_oficial_nota": 33,  # CORRIGIDO
-    "exibicao_video_nota": 33,  # CORRIGIDO
-    "citacao_releases_nota": 33,  # CORRIGIDO
+    "plano_comunicacao_nota": 33,
+    "redes_sociais_nota": 33,
+    "monitoramento_nota": 33,
+    "conteudo_institucional_nota": 33,
+    "ativacoes_marca_nota": 33,
+    "direitos_imagem_nota": 33,
+    "contrapartida_imagem_nota": 33,
+    "site_oficial_nota": 33,
+    "exibicao_video_nota": 33,
+    "citacao_releases_nota": 33,
     
-    "voluntariado_corporativo_nota": 25,  # CORRIGIDO
-    "datas_comemorativas_nota": 25,  # CORRIGIDO
-    "engajamento_comunitario_nota": 25,  # CORRIGIDO
+    "voluntariado_corporativo_nota": 25,
+    "datas_comemorativas_nota": 25,
+    "engajamento_comunitario_nota": 25,
     
-    "captacao_nota": 25,  # CORRIGIDO
-    "execucao_garantida_nota": 25,  # CORRIGIDO
-    "cotas_nota": 25,  # CORRIGIDO
+    "captacao_nota": 25,
+    "execucao_garantida_nota": 25,
+    "cotas_nota": 25,
 }
 
 def extrair_dados_planilha(file_bytes: bytes) -> dict:

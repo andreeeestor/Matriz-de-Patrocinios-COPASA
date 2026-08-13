@@ -761,10 +761,12 @@
             </div>
             <button
               type="submit"
+              id="mpLoginBtn"
               class="mp-btn mp-btn-primary mp-enabled"
-              style="cursor: pointer; pointer-events: auto; opacity: 1"
+              style="cursor: pointer; pointer-events: auto; opacity: 1; width: 100%; justify-content: center;"
             >
-              Entrar
+              <span class="mp-btn-text">Entrar</span>
+              <span class="mp-spinner"></span>
             </button>
           </form>
         </div>
@@ -918,17 +920,17 @@
           recursos_financeiros_nota: 25,
           experiencia_resultados_nota: 25,
           parcerias_nota: 25,
-          beneficiarios_diretos_nota: 36,
-          beneficiarios_indiretos_nota: 36,
-          educacao_nota: 36,
-          saude_nota: 36,
-          inclusao_nota: 36,
-          esg_nota: 36,
-          diferencial_artistico_nota: 36,
-          diferencial_social_nota: 36,
-          diferencial_originalidade_nota: 36,
-          diferencial_tecnico_nota: 36,
-          diferencial_relacionamento_nota: 36,
+          beneficiarios_diretos_nota: 25,
+          beneficiarios_indiretos_nota: 24,
+          educacao_nota: 24,
+          saude_nota: 24,
+          inclusao_nota: 24,
+          esg_nota: 24,
+          diferencial_artistico_nota: 23,
+          diferencial_social_nota: 23,
+          diferencial_originalidade_nota: 23,
+          diferencial_tecnico_nota: 23,
+          diferencial_relacionamento_nota: 23,
           interesse_coletivo_nota: 0,
           plano_comunicacao_nota: 33,
           redes_sociais_nota: 33,
@@ -1006,7 +1008,20 @@
               { id: "cidade", label: "Cidade", type: "text" },
               { id: "estado", label: "Estado", type: "text" },
               { id: "email", label: "E-mail", type: "email", required: true },
-              { id: "redes_sociais", label: "Redes Sociais", type: "text" },
+              {
+                id: "redes_sociais",
+                label: "Redes Sociais",
+                type: "select",
+                options: [
+                  "Instagram",
+                  "Facebook",
+                  "LinkedIn",
+                  "YouTube",
+                  "TikTok",
+                  "X / Twitter",
+                  "Outras / Múltiplas"
+                ]
+              },
             ],
           },
           {
@@ -1289,6 +1304,19 @@
                 step: "any",
               },
               {
+                id: "conteudo_institucional_tipo",
+                label: "Tipo de Conteúdo Institucional",
+                type: "select",
+                options: [
+                  "Rádio",
+                  "Revista",
+                  "TV / Vídeo",
+                  "Jornal Impresso",
+                  "Portal / Podcast",
+                  "Outros / Múltiplos"
+                ]
+              },
+              {
                 id: "ativacoes_marca_nota",
                 label: "Ativações da Marca",
                 type: "number",
@@ -1489,6 +1517,18 @@
             if (field.type === "textarea") {
               input = document.createElement("textarea");
               input.rows = 3;
+            } else if (field.type === "select") {
+              input = document.createElement("select");
+              var defaultOpt = document.createElement("option");
+              defaultOpt.value = "";
+              defaultOpt.textContent = "Selecione uma opção...";
+              input.appendChild(defaultOpt);
+              (field.options || []).forEach(function (optText) {
+                var opt = document.createElement("option");
+                opt.value = optText;
+                opt.textContent = optText;
+                input.appendChild(opt);
+              });
             } else {
               input = document.createElement("input");
               input.type = field.type || "text";
@@ -1546,7 +1586,11 @@
               obsInput.id = obsId;
               obsInput.name = obsId;
               obsInput.className = "mp-obs-input";
-              obsInput.placeholder = "Observação sobre " + field.label + "...";
+              if (field.id === "plano_comunicacao_nota") {
+                obsInput.placeholder = "Descreva o plano de comunicação";
+              } else {
+                obsInput.placeholder = "Observação sobre " + field.label + "...";
+              }
 
               obsInput.addEventListener("input", function () {
                 if (this.value.trim() !== "") {
@@ -1858,9 +1902,12 @@
           }
         }
 
+        var loginBtn = document.getElementById("mpLoginBtn");
+
         loginForm.addEventListener("submit", async function (e) {
           e.preventDefault();
           loginError.classList.remove("mp-show");
+          if (loginBtn) loginBtn.classList.add("mp-loading");
 
           var params = new URLSearchParams();
           params.append("username", loginUser.value.trim());
@@ -1886,6 +1933,8 @@
             }
           } catch (err) {
             showToast("Erro de comunicação com o servidor.", "error");
+          } finally {
+            if (loginBtn) loginBtn.classList.remove("mp-loading");
           }
         });
 
