@@ -68,3 +68,26 @@ async def analisar_planilha_endpoint(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erro ao processar e analisar a planilha: {str(e)}"
         )
+
+@router.post("/avaliar-formulario")
+async def avaliar_formulario_endpoint(
+    dados_form: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """Recebe as descrições textuais do formulário e usa a IA para avaliar e atribuir pontuação a todos os critérios."""
+    try:
+        from core.ai import avaliar_formulario_com_groq
+        resultado = await avaliar_formulario_com_groq(dados_form)
+        if not resultado.get("sucesso"):
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail=resultado.get("erro", "Falha ao avaliar formulário via IA.")
+            )
+        return resultado
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro ao processar avaliação do formulário: {str(e)}"
+        )

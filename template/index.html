@@ -824,6 +824,15 @@
             >
               Limpar
             </button>
+            <button
+              type="button"
+              id="mpAvaliarFormBtn"
+              class="mp-btn mp-enabled"
+              style="background: #8b5cf6; color: #ffffff;"
+            >
+              <span class="mp-btn-text">Avaliar com IA</span>
+              <span class="mp-spinner"></span>
+            </button>
             <button type="button" id="mpGerarBtn" class="mp-btn mp-btn-primary">
               <span class="mp-btn-text">Gerar Planilha</span>
               <span class="mp-spinner"></span>
@@ -871,8 +880,18 @@
         </div>
 
         <!-- Container do Resultado da Análise -->
-        <div id="mpAiResultContainer" style="display: none; background: #ffffff; border-radius: 12px; padding: 24px; border: 1px solid #e2e8f0;">
-          <h3 style="font-size: 1.1rem; font-weight: 700; color: #1e293b; margin-bottom: 12px;">Relatório Diagnóstico da IA</h3>
+        <div id="mpAiResultContainer" style="display: none; background: #ffffff; border-radius: 12px; padding: 24px; border: 1px solid #e2e8f0; margin-top: 20px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #1e293b; margin: 0;">Relatório Diagnóstico da IA</h3>
+            <button type="button" id="mpExportPdfBtn" class="mp-btn mp-btn-secondary" style="font-size: 0.85rem; padding: 8px 16px; background: #0284c7; color: #ffffff; border-color: #0284c7;">
+              <svg style="width: 16px; height: 16px; margin-right: 6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Exportar Relatório PDF
+            </button>
+          </div>
           <div id="mpAiResultContent"></div>
         </div>
       </div>
@@ -1010,8 +1029,9 @@
               { id: "email", label: "E-mail", type: "email", required: true },
               {
                 id: "redes_sociais",
-                label: "Redes Sociais",
+                label: "Redes Sociais (segure Ctrl/Cmd para selecionar várias)",
                 type: "select",
+                multiple: true,
                 options: [
                   "Instagram",
                   "Facebook",
@@ -1019,7 +1039,7 @@
                   "YouTube",
                   "TikTok",
                   "X / Twitter",
-                  "Outras / Múltiplas"
+                  "Outras"
                 ]
               },
             ],
@@ -1129,20 +1149,20 @@
               {
                 id: "valores_organizacionais_nota",
                 label: "Valores Organizacionais",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva como o projeto se alinha aos valores organizacionais da COPASA...",
               },
               {
                 id: "diversidade_inclusao_nota",
                 label: "Diversidade e Inclusão",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva as ações de diversidade, acessibilidade e inclusão do projeto...",
               },
               {
                 id: "sustentabilidade_nota",
                 label: "Sustentabilidade",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva as práticas de sustentabilidade ambiental e social do projeto...",
               },
             ],
           },
@@ -1152,50 +1172,50 @@
               {
                 id: "portfolio_nota",
                 label: "Portfólio",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva o histórico e portfólio de projetos realizados pelo proponente...",
               },
               {
                 id: "experiencia_incentivos_nota",
                 label: "Experiência Incentivos",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva a experiência prévia do proponente com leis de incentivo...",
               },
               {
                 id: "capacidade_tecnica_nota",
                 label: "Capacidade Técnica",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva a capacidade técnica da equipe responsável...",
               },
               {
                 id: "governanca_nota",
                 label: "Governança",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva a estrutura de governança e transparência do proponente...",
               },
               {
                 id: "recursos_humanos_nota",
                 label: "Recursos Humanos",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva a equipe e recursos humanos alocados no projeto...",
               },
               {
                 id: "recursos_financeiros_nota",
                 label: "Recursos Financeiros",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva a saúde financeira e gestão do orçamento do proponente...",
               },
               {
                 id: "experiencia_resultados_nota",
                 label: "Experiência e Resultados",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Detalhamento de resultados mensuráveis de edições anteriores...",
               },
               {
                 id: "parcerias_nota",
                 label: "Parcerias",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Liste e descreva as parcerias e apoiadores confirmados...",
               },
             ],
           },
@@ -1205,74 +1225,74 @@
               {
                 id: "beneficiarios_diretos_nota",
                 label: "Beneficiários Diretos",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva a quantidade e perfil dos beneficiários diretos...",
               },
               {
                 id: "beneficiarios_indiretos_nota",
                 label: "Beneficiários Indiretos",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva o alcance e público beneficiado indiretamente...",
               },
               {
                 id: "educacao_nota",
                 label: "Educação",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva as ações educativas ou oficinas integradas...",
               },
               {
                 id: "saude_nota",
                 label: "Saúde",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva os impactos em saúde, bem-estar ou saneamento...",
               },
               {
                 id: "inclusao_nota",
                 label: "Inclusão",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva as medidas de inclusão social, de gênero ou de PCDs...",
               },
               {
                 id: "esg_nota",
                 label: "ESG",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva as métricas e práticas alinhadas aos pilares ESG...",
               },
               {
                 id: "diferencial_artistico_nota",
                 label: "Diferencial Artístico/Cultural",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Destaque o valor artístico, histórico ou relevante do projeto...",
               },
               {
                 id: "diferencial_social_nota",
                 label: "Diferencial Social/Ambiental",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Destaque o legado socioambiental deixado para a comunidade...",
               },
               {
                 id: "diferencial_originalidade_nota",
                 label: "Diferencial de Originalidade",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva o caráter inovador e inédito do projeto...",
               },
               {
                 id: "diferencial_tecnico_nota",
                 label: "Diferencial Técnico-Científico",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva o embasamento técnico, científico ou pedagógico...",
               },
               {
                 id: "diferencial_relacionamento_nota",
                 label: "Diferencial de Relacionamento",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva as oportunidades de relacionamento institucional com a COPASA...",
               },
               {
                 id: "interesse_coletivo_nota",
                 label: "Interesse Coletivo",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva como o projeto atende ao interesse público e coletivo...",
               },
             ],
           },
@@ -1282,26 +1302,26 @@
               {
                 id: "plano_comunicacao_nota",
                 label: "Plano de Comunicação",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva detalhadamente o plano de divulgação e mídia...",
               },
               {
                 id: "redes_sociais_nota",
                 label: "Redes Sociais",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva a estratégia nas redes sociais e alcance estimado...",
               },
               {
                 id: "monitoramento_nota",
                 label: "Monitoramento",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva como serão mensurados os resultados de mídia...",
               },
               {
                 id: "conteudo_institucional_nota",
                 label: "Conteúdo Institucional",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva o espaço garantido para a marca COPASA...",
               },
               {
                 id: "conteudo_institucional_tipo",
@@ -1319,38 +1339,38 @@
               {
                 id: "ativacoes_marca_nota",
                 label: "Ativações da Marca",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva as ações presenciais e estandes de ativação...",
               },
               {
                 id: "direitos_imagem_nota",
                 label: "Direitos de Imagem",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva a cessão de direitos de imagem para a COPASA...",
               },
               {
                 id: "contrapartida_imagem_nota",
                 label: "Contrapartida de Imagem",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva as contrapartidas institucionais e visibilidade...",
               },
               {
                 id: "site_oficial_nota",
                 label: "Site Oficial",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva a inclusão da logomarca no site do evento...",
               },
               {
                 id: "exibicao_video_nota",
                 label: "Exibição de Vídeo",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva a exibição de vídeos institucionais da COPASA...",
               },
               {
                 id: "citacao_releases_nota",
                 label: "Citação nos Releases",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Garantia de citação da COPASA nos materiais de assessoria de imprensa...",
               },
             ],
           },
@@ -1360,20 +1380,20 @@
               {
                 id: "voluntariado_corporativo_nota",
                 label: "Voluntariado Corporativo",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Descreva o programa de envolvimento dos colaboradores COPASA...",
               },
               {
                 id: "datas_comemorativas_nota",
                 label: "Datas Comemorativas",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Ações previstas em datas comemorativas ambientais/sociais...",
               },
               {
                 id: "engajamento_comunitario_nota",
                 label: "Engajamento Comunitário",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Mobilização direta da comunidade atendida...",
               },
             ],
           },
@@ -1418,20 +1438,20 @@
               {
                 id: "captacao_nota",
                 label: "Captação — % já captado",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Informe o percentual já captado e patrocinadores confirmados...",
               },
               {
                 id: "execucao_garantida_nota",
                 label: "Execução Garantida",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Garantias de execução do projeto independente de captação total...",
               },
               {
                 id: "cotas_nota",
                 label: "Cotas",
-                type: "number",
-                step: "any",
+                type: "textarea",
+                placeholder: "Detalhamento das cotas de patrocínio oferecidas...",
               },
             ],
           },
@@ -1517,12 +1537,19 @@
             if (field.type === "textarea") {
               input = document.createElement("textarea");
               input.rows = 3;
+              if (field.placeholder) input.placeholder = field.placeholder;
             } else if (field.type === "select") {
               input = document.createElement("select");
-              var defaultOpt = document.createElement("option");
-              defaultOpt.value = "";
-              defaultOpt.textContent = "Selecione uma opção...";
-              input.appendChild(defaultOpt);
+              if (field.multiple) {
+                input.multiple = true;
+                input.style.height = "auto";
+                input.style.minHeight = "90px";
+              } else {
+                var defaultOpt = document.createElement("option");
+                defaultOpt.value = "";
+                defaultOpt.textContent = "Selecione uma opção...";
+                input.appendChild(defaultOpt);
+              }
               (field.options || []).forEach(function (optText) {
                 var opt = document.createElement("option");
                 opt.value = optText;
@@ -2033,6 +2060,117 @@
           }
         });
 
+        var avaliarFormBtn = document.getElementById("mpAvaliarFormBtn");
+        var exportPdfBtn = document.getElementById("mpExportPdfBtn");
+
+        if (avaliarFormBtn) {
+          avaliarFormBtn.addEventListener("click", async function () {
+            var token = sessionStorage.getItem("mp_token");
+            var formData = new FormData(form);
+            var data = {};
+            for (var pair of formData.entries()) {
+              if (data[pair[0]]) {
+                if (Array.isArray(data[pair[0]])) {
+                  data[pair[0]].push(pair[1]);
+                } else {
+                  data[pair[0]] = [data[pair[0]], pair[1]];
+                }
+              } else {
+                data[pair[0]] = pair[1];
+              }
+            }
+
+            this.classList.add("mp-loading");
+            showToast("Avaliando formulário com a IA Groq...", "info");
+
+            try {
+              var res = await fetch(API_BASE + "/ai/avaliar-formulario", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": token ? ("Bearer " + token) : ""
+                },
+                body: JSON.stringify(data),
+              });
+
+              if (res.status === 401) {
+                showToast("Sessão expirada. Faça login novamente.", "error");
+                sessionStorage.removeItem("mp_token");
+                checkAuth();
+                return;
+              }
+
+              var resultData = await res.json();
+              if (res.ok && resultData.sucesso) {
+                // Preencher automaticamente os valores calculados pela IA nos campos e observações do formulário
+                var notasMap = resultData.notas_atribuidas || {};
+                for (var key in notasMap) {
+                  var inputEl = form.querySelector('[name="' + key + '"]');
+                  if (inputEl) {
+                    inputEl.value = notasMap[key];
+                    var groupEl = inputEl.closest(".mp-field-group");
+                    if (groupEl) groupEl.classList.add("mp-has-value");
+                  }
+                }
+                
+                checkForm();
+                atualizarScore();
+
+                // Renderizar a análise no container diagnóstico
+                renderAiResult({
+                  dados_extraidos: {
+                    nome_projeto: data.nome_projeto || "Projeto de Patrocínio",
+                    proponente: data.proponente || "Proponente",
+                  },
+                  analise_ia: {
+                    resumo_executivo: resultData.resumo_avaliador || "Avaliação detalhada realizada pelo comitê de Inteligência Artificial da COPASA.",
+                    pontos_fortes: resultData.pontos_fortes || [],
+                    oportunidades_melhoria: (resultData.oportunidades_melhoria || []).map(function(item) {
+                      if (typeof item === 'string') return { criterio: "Melhoria Recomendada", nota_atual: "-", nota_maxima: "-", recomendacao: item };
+                      return item;
+                    }),
+                    conclusao: "Pontuação Total Atribuída pela IA: " + resultData.pontuacao_total_obtida + " de " + resultData.pontuacao_maxima_possivel + " pontos."
+                  }
+                });
+
+                showToast("Avaliação concluída! Pontuação calculada pela IA.", "success");
+                var resultContainer = document.getElementById("mpAiResultContainer");
+                if (resultContainer) resultContainer.scrollIntoView({ behavior: 'smooth' });
+              } else {
+                showToast(resultData.detail || resultData.erro || "Erro na avaliação.", "error");
+              }
+            } catch (err) {
+              showToast("Erro ao conectar com a IA da Groq.", "error");
+            } finally {
+              this.classList.remove("mp-loading");
+            }
+          });
+        }
+
+        if (exportPdfBtn) {
+          exportPdfBtn.addEventListener("click", function () {
+            var content = document.getElementById("mpAiResultContent");
+            if (!content || !content.innerHTML.trim()) {
+              showToast("Nenhum relatório para exportar.", "error");
+              return;
+            }
+
+            var printWin = window.open("", "_blank", "width=800,height=900");
+            printWin.document.write("<html><head><title>Relatório Diagnóstico IA - Matriz COPASA</title>");
+            printWin.document.write('<style>body { font-family: sans-serif; padding: 30px; color: #1e293b; line-height: 1.5; } h3 { color: #0284c7; } h4 { color: #334155; margin-top: 16px; } div { margin-bottom: 10px; } ul { padding-left: 20px; }</style>');
+            printWin.document.write("</head><body>");
+            printWin.document.write('<h2 style="color: #0284c7; border-bottom: 2px solid #0284c7; padding-bottom: 8px;">COPASA — Relatório Diagnóstico da IA</h2>');
+            printWin.document.write(content.innerHTML);
+            printWin.document.write('<footer style="margin-top: 40px; font-size: 0.8rem; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 12px;">Gerado automaticamente pela Matriz de Patrocínios COPASA via Groq LPU Cloud</footer>');
+            printWin.document.write("</body></html>");
+            printWin.document.close();
+            printWin.focus();
+            setTimeout(function () {
+              printWin.print();
+            }, 500);
+          });
+        }
+
         function renderAiResult(data) {
           var container = document.getElementById("mpAiResultContainer");
           var content = document.getElementById("mpAiResultContent");
@@ -2050,10 +2188,14 @@
           }
 
           if (ia.oportunidades_melhoria && ia.oportunidades_melhoria.length > 0) {
-            html += '<h4 style="color: #9a3412; font-weight: 700; margin-top: 16px;">Oportunidades de Melhoria (Ganho de Pontos)</h4>';
+            html += '<h4 style="color: #9a3412; font-weight: 700; margin-top: 16px;">Oportunidades de Melhoria / Parecer de Pontuação</h4>';
             ia.oportunidades_melhoria.forEach(function (op) {
               html += '<div style="background: #fff7ed; border-left: 4px solid #f97316; padding: 10px 14px; margin-top: 8px; border-radius: 4px;">';
-              html += '<strong>' + (op.criterio || "Critério") + '</strong> (Nota: ' + op.nota_atual + ' / Máx: ' + op.nota_maxima + ')<br/>';
+              if (op.nota_atual && op.nota_atual !== "-") {
+                html += '<strong>' + (op.criterio || "Critério") + '</strong> (Nota: ' + op.nota_atual + ' / Máx: ' + op.nota_maxima + ')<br/>';
+              } else {
+                html += '<strong>' + (op.criterio || "Observação") + '</strong><br/>';
+              }
               html += '<span style="color: #475569;">' + op.recomendacao + '</span>';
               html += '</div>';
             });

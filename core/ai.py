@@ -181,3 +181,109 @@ async def analisar_planilha_com_groq(dados_planilha: dict) -> dict:
             "sucesso": False,
             "erro": f"Erro de conexão com a API do Groq: {str(e)}"
         }
+
+async def avaliar_formulario_com_groq(dados_form: dict) -> dict:
+    """Recebe os dados textuais do formulário preenchido e utiliza a IA Groq para avaliar e atribuir notas a cada critério."""
+    if not settings.GROQ_API_KEY:
+        return {
+            "sucesso": False,
+            "erro": "GROQ_API_KEY não foi configurada."
+        }
+
+    system_prompt = (
+        "Você é um comitê avaliador especialista em projetos e patrocínios da COPASA. "
+        "Sua função é analisar as descrições, justificativas e informações prestadas pelo proponente e ATRIBUIR UMA NOTA JUSTA "
+        "para cada critério de avaliação, respeitando rigorosamente a NOTA MÁXIMA de cada critério especificada abaixo:\n\n"
+        f"LIMITES MÁXIMOS DE NOTA POR CRITÉRIO (MAX_SCORES):\n{json.dumps(MAX_SCORES, ensure_ascii=False, indent=2)}\n\n"
+        "Regras para atribuição de notas:\n"
+        "1. Para cada critério (ex: 'valores_organizacionais_nota', 'portfolio_nota', etc.), avalie a qualidade da informação fornecida.\n"
+        "2. Atribua uma nota numérica entre 0 e a nota máxima do critério.\n"
+        "3. Forneça uma breve justificativa/observação (ex: 'valores_organizacionais_obs') explicando o motivo da nota dada.\n"
+        "4. O critério 'interesse_coletivo_nota' deve sempre receber nota 0.\n\n"
+        "RESPONDA EXCLUSIVAMENTE EM FORMATO JSON VÁLIDO no seguinte formato:\n"
+        "{\n"
+        '  "notas": {\n'
+        '     "valores_organizacionais_nota": 18,\n'
+        '     "valores_organizacionais_obs": "Justificativa...",\n'
+        '     "diversidade_inclusao_nota": 15,\n'
+        '     "diversidade_inclusao_obs": "Justificativa..."\n'
+        '     ... (incluir TODOS os 39 critérios terminados em _nota e seus _obs respectivos)\n'
+        '  },\n'
+        '  "resumo_avaliador": "Resumo geral da avaliação do comitê de IA",\n'
+        '  "pontos_fortes": ["Destaques do projeto"],\n'
+        '  "oportunidades_melhoria": ["Pontos em que o proponente pode melhorar"]\n'
+        "}"
+    )
+
+    user_prompt = f"Informações do Formulário de Projeto Submetido:\n{json.dumps(dados_form, ensure_ascii=False, indent=2)}"
+
+    headers = {
+        "Authorization": f"Bearer {settings.GROQ_API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "model": settings.GROQ_MODEL,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ],
+        "response_format": {"type": "json_object"},
+        "temperature": 0.2
+    }
+
+    try:
+        async with httpx.AsyncClient(timeout=45.0) as client:
+            res = await client.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers=headers,
+                json=payload
+            )
+
+            if res.status_code == 200:
+                res_data = res.json()
+                choices = res_data.get("choices", [])
+                response_text = choices[0]["message"]["content"] if choices else "{}"
+                try:
+                    eval_json = json.loads(response_text)
+                except json.JSONDecodeError:
+                    eval_json = {"notas": {}, "resumo_avaliador": "Erro ao parsear JSON"}
+                
+                # Garantir limites máximos e calcular soma
+                notas_dict = eval_json.get("notas", {})
+                pontuacao_total = 0.0
+                notas_ajustadas = {}
+
+                for crit, max_val in MAX_SCORES.items():
+                    val_dado = notas_dict.get(crit, 0)
+                    try:
+                        val_num = float(val_dado)
+                    except (ValueError, TypeError):
+                        val_num = 0.0
+                    val_num = max(0.0, min(val_num, float(max_val)))
+                    notas_ajustadas[crit] = val_num
+                    pontuacao_total += val_num
+                    
+                    obs_key = crit.replace("_nota", "_obs")
+                    notas_ajustadas[obs_key] = notas_dict.get(obs_key, "")
+
+                return {
+                    "sucesso": True,
+                    "modelo_usado": settings.GROQ_MODEL,
+                    "pontuacao_total_obtida": round(pontuacao_total, 2),
+                    "pontuacao_maxima_possivel": sum(MAX_SCORES.values()),
+                    "notas_atribuidas": notas_ajustadas,
+                    "resumo_avaliador": eval_json.get("resumo_avaliador", ""),
+                    "pontos_fortes": eval_json.get("pontos_fortes", []),
+                    "oportunidades_melhoria": eval_json.get("oportunidades_melhoria", [])
+                }
+            else:
+                return {
+                    "sucesso": False,
+                    "erro": f"API do Groq respondeu com status {res.status_code}: {res.text}"
+                }
+    except Exception as e:
+        return {
+            "sucesso": False,
+            "erro": f"Erro ao comunicar com a IA da Groq: {str(e)}"
+        }
