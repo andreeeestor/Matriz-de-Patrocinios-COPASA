@@ -411,7 +411,8 @@
         gap: 8px;
         margin-bottom: 2px;
       }
-      #mp-root .mp-obs-toggle {
+      /* ── Attachment widget ───────────────────────────────────── */
+      #mp-root .mp-attach-btn {
         background: #f8fafc;
         border: 1px solid #e2e8f0;
         border-radius: 6px;
@@ -427,35 +428,85 @@
         transition: all 0.15s ease;
         line-height: 1.4;
       }
-      #mp-root .mp-obs-toggle svg {
+      #mp-root .mp-attach-btn svg {
         width: 12px;
         height: 12px;
         flex-shrink: 0;
       }
-      #mp-root .mp-obs-toggle:hover {
-        background: #f1f5f9;
-        color: #0ea5e9;
-        border-color: #cbd5e1;
-      }
-      #mp-root .mp-obs-toggle.mp-active,
-      #mp-root .mp-obs-toggle.mp-has-obs {
-        background: #e0f2fe;
+      #mp-root .mp-attach-btn:hover {
+        background: #eff6ff;
         color: #0284c7;
-        border-color: #7dd3fc;
+        border-color: #bfdbfe;
       }
-      #mp-root .mp-obs-wrapper {
-        max-height: 0;
-        opacity: 0;
-        overflow: hidden;
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        margin-top: 0;
+      #mp-root .mp-attach-btn.mp-attached {
+        background: #f0fdf4;
+        color: #16a34a;
+        border-color: #86efac;
       }
-      #mp-root .mp-obs-wrapper.mp-open {
-        max-height: 80px;
-        opacity: 1;
+      #mp-root .mp-attach-btn.mp-attach-required-empty {
+        background: #fff7ed;
+        color: #ea580c;
+        border-color: #fed7aa;
+      }
+      #mp-root .mp-attach-wrapper {
         margin-top: 6px;
       }
-      #mp-root .mp-obs-input {
+      #mp-root .mp-attach-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #f0fdf4;
+        border: 1px solid #86efac;
+        border-radius: 6px;
+        padding: 5px 10px;
+        font-size: 0.78rem;
+        color: #166534;
+        font-weight: 500;
+        margin-top: 6px;
+        cursor: pointer;
+        transition: background 0.15s, border-color 0.15s;
+        max-width: 100%;
+        overflow: hidden;
+      }
+      #mp-root .mp-attach-badge:hover {
+        background: #dcfce7;
+        border-color: #4ade80;
+      }
+      #mp-root .mp-attach-badge .mp-attach-filename {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 220px;
+      }
+      #mp-root .mp-attach-badge .mp-attach-hint {
+        font-size: 0.7rem;
+        color: #16a34a;
+        opacity: 0.7;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      #mp-root .mp-attach-badge svg {
+        width: 13px;
+        height: 13px;
+        color: #16a34a;
+        flex-shrink: 0;
+      }
+      #mp-root .mp-attach-badge .mp-attach-remove {
+        cursor: pointer;
+        color: #dc2626;
+        font-size: 1rem;
+        line-height: 1;
+        margin-left: 4px;
+        transition: opacity 0.15s;
+        border: none;
+        background: none;
+        padding: 0;
+        flex-shrink: 0;
+      }
+      #mp-root .mp-attach-badge .mp-attach-remove:hover {
+        opacity: 0.65;
+      }
+      #mp-root .mp-attach-input {
         font-size: 0.8rem !important;
         padding: 8px 12px !important;
         background: #f8fafc !important;
@@ -463,7 +514,7 @@
         border-color: #cbd5e1 !important;
         border-radius: 8px !important;
       }
-      #mp-root .mp-obs-input:focus {
+      #mp-root .mp-attach-input:focus {
         background: #ffffff !important;
         border-style: solid !important;
         border-color: #0ea5e9 !important;
@@ -1203,6 +1254,9 @@
                 label: "Código de Aprovação",
                 type: "text",
                 required: true,
+                attach: true,
+                attachRequired: true,
+                attachLabel: "Comprovante de aprovação",
               },
               {
                 id: "artigo_aprovacao",
@@ -1219,6 +1273,9 @@
                 id: "data_prorrogacao",
                 label: "Data de Prorrogação do Projeto",
                 type: "date",
+                attach: true,
+                attachRequired: true,
+                attachLabel: "Documento de prorrogação",
               },
               {
                 id: "data_final_captacao",
@@ -1291,6 +1348,8 @@
                 label: "Sustentabilidade",
                 type: "textarea",
                 placeholder: "Descreva as práticas de sustentabilidade ambiental e social do projeto...",
+                attach: true,
+                attachLabel: "Foto ou documento de sustentabilidade (opcional)",
               },
             ],
           },
@@ -1302,6 +1361,9 @@
                 label: "Portfólio",
                 type: "textarea",
                 placeholder: "Descreva o histórico e portfólio de projetos realizados pelo proponente...",
+                attach: true,
+                attachRequired: true,
+                attachLabel: "Arquivo de portfólio (PDF, imagens)",
               },
               {
                 id: "experiencia_incentivos_nota",
@@ -1314,6 +1376,8 @@
                 label: "Capacidade Técnica",
                 type: "textarea",
                 placeholder: "Descreva a capacidade técnica da equipe responsável...",
+                attach: true,
+                attachLabel: "Currículo ou certificações (opcional)",
               },
               {
                 id: "governanca_nota",
@@ -1338,6 +1402,8 @@
                 label: "Experiência e Resultados",
                 type: "textarea",
                 placeholder: "Detalhamento de resultados mensuráveis de edições anteriores...",
+                attach: true,
+                attachLabel: "Relatórios ou registros de resultados (opcional)",
               },
               {
                 id: "parcerias_nota",
@@ -1651,20 +1717,16 @@
             label.innerHTML = labelText + (field.required ? ' <span class="mp-required-dot"></span>' : "");
             labelRow.appendChild(label);
 
-            var obsId = field.id.endsWith("_nota")
-              ? field.id.replace("_nota", "_obs")
-              : null;
-            var obsBtn = null;
-            var obsWrapper = null;
-            var obsInput = null;
+            // Attachment button — only for fields with attach:true
+            var attachBtn = null;
 
-            if (obsId) {
-              obsBtn = document.createElement("button");
-              obsBtn.type = "button";
-              obsBtn.className = "mp-obs-toggle";
-              obsBtn.innerHTML = ICONS.messageSquare + " <span>+ Obs</span>";
-              obsBtn.title = "Adicionar observação sobre este critério";
-              labelRow.appendChild(obsBtn);
+            if (field.attach) {
+              attachBtn = document.createElement("button");
+              attachBtn.type = "button";
+              attachBtn.className = "mp-attach-btn" + (field.attachRequired ? " mp-attach-required-empty" : "");
+              attachBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg><span>' + (field.attachRequired ? '+ Anexar *' : '+ Anexar') + '</span>';
+              attachBtn.title = field.attachLabel || "Adicionar anexo";
+              labelRow.appendChild(attachBtn);
             }
 
             group.appendChild(labelRow);
@@ -1812,40 +1874,72 @@
 
             group.appendChild(input);
 
-            if (obsId) {
-              obsWrapper = document.createElement("div");
-              obsWrapper.className = "mp-obs-wrapper";
+            // Render attachment widget for fields with attach:true
+            if (field.attach && attachBtn) {
+              var attachWrapper = document.createElement("div");
+              attachWrapper.className = "mp-attach-wrapper";
 
-              obsInput = document.createElement("input");
-              obsInput.type = "text";
-              obsInput.id = obsId;
-              obsInput.name = obsId;
-              obsInput.className = "mp-obs-input";
-              if (field.id === "plano_comunicacao_nota") {
-                obsInput.placeholder = "Descreva o plano de comunicação";
-              } else {
-                obsInput.placeholder = "Observação sobre " + field.label + "...";
-              }
+              var attachFileInput = document.createElement("input");
+              attachFileInput.type = "file";
+              attachFileInput.id = "attach_" + field.id;
+              attachFileInput.name = "attach_" + field.id;
+              attachFileInput.style.display = "none";
+              attachFileInput.accept = ".pdf,.doc,.docx,.jpg,.jpeg,.png,.xlsx,.xls";
+              attachWrapper.appendChild(attachFileInput);
 
-              obsInput.addEventListener("input", function () {
-                if (this.value.trim() !== "") {
-                  obsBtn.classList.add("mp-has-obs");
-                } else {
-                  obsBtn.classList.remove("mp-has-obs");
-                }
-              });
+              var badgeContainer = document.createElement("div");
+              attachWrapper.appendChild(badgeContainer);
+              group.appendChild(attachWrapper);
 
-              obsBtn.addEventListener("click", function (e) {
-                e.preventDefault();
-                var isExpanded = obsWrapper.classList.toggle("mp-open");
-                obsBtn.classList.toggle("mp-active", isExpanded);
-                if (isExpanded) {
-                  obsInput.focus();
-                }
-              });
+              (function(btn, fileInp, fld, badgeCont) {
+                btn.addEventListener("click", function (e) {
+                  e.preventDefault();
+                  fileInp.click();
+                });
 
-              obsWrapper.appendChild(obsInput);
-              group.appendChild(obsWrapper);
+                fileInp.addEventListener("change", function () {
+                  badgeCont.innerHTML = "";
+                  if (this.files && this.files.length > 0) {
+                    var file = this.files[0];
+                    var fileSize = file.size > 1048576
+                      ? (file.size / 1048576).toFixed(1) + ' MB'
+                      : Math.round(file.size / 1024) + ' KB';
+
+                    var badge = document.createElement("div");
+                    badge.className = "mp-attach-badge";
+                    badge.title = "Clique para trocar o arquivo";
+                    badge.innerHTML =
+                      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' +
+                      '<span class="mp-attach-filename">' + file.name + ' (' + fileSize + ')</span>' +
+                      '<span class="mp-attach-hint">&#8627; trocar</span>' +
+                      '<button class="mp-attach-remove" title="Remover anexo">&#x2715;</button>';
+
+                    // Clicar no badge (exceto no botão ×) reabre o seletor
+                    badge.addEventListener("click", function(e) {
+                      if (!e.target.classList.contains("mp-attach-remove")) {
+                        fileInp.click();
+                      }
+                    });
+
+                    badge.querySelector(".mp-attach-remove").addEventListener("click", function(e) {
+                      e.stopPropagation();
+                      fileInp.value = "";
+                      badgeCont.innerHTML = "";
+                      btn.classList.remove("mp-attached");
+                      if (fld.attachRequired) btn.classList.add("mp-attach-required-empty");
+                      checkForm();
+                    });
+
+                    badgeCont.appendChild(badge);
+                    btn.classList.add("mp-attached");
+                    btn.classList.remove("mp-attach-required-empty");
+                  } else {
+                    btn.classList.remove("mp-attached");
+                    if (fld.attachRequired) btn.classList.add("mp-attach-required-empty");
+                  }
+                  checkForm();
+                });
+              })(attachBtn, attachFileInput, field, badgeContainer);
             }
 
             grid.appendChild(group);
@@ -1975,6 +2069,19 @@
             if (inp.value.trim() !== "") filledRequired++;
           });
 
+          // Verificar se os anexos obrigatórios foram adicionados
+          var attachRequiredOk = true;
+          sectionsData.forEach(function(sec) {
+            sec.fields.forEach(function(f) {
+              if (f.attach && f.attachRequired) {
+                var fileInp = form.querySelector('[name="attach_' + f.id + '"]');
+                if (!fileInp || !fileInp.files || fileInp.files.length === 0) {
+                  attachRequiredOk = false;
+                }
+              }
+            });
+          });
+
           // Verificar se há pelo menos um campo de pontuação preenchido (seções 3 a 7)
           var scoreFieldsFilled = 0;
           sectionsData.forEach(function(sec, idx) {
@@ -1989,7 +2096,7 @@
           var pct = required.length > 0 ? (filledRequired / required.length) * 100 : 0;
           progress.style.width = pct + "%";
 
-          var isRequiredValid = (filledRequired === required.length && required.length > 0);
+          var isRequiredValid = (filledRequired === required.length && required.length > 0 && attachRequiredOk);
           
           if (isRequiredValid) {
             gerarBtn.classList.add("mp-enabled");
@@ -2030,11 +2137,14 @@
               if (parent) parent.classList.remove("mp-has-value");
             }
           });
-          form.querySelectorAll(".mp-obs-wrapper").forEach(function (w) {
-            w.classList.remove("mp-open");
-          });
-          form.querySelectorAll(".mp-obs-toggle").forEach(function (btn) {
-            btn.classList.remove("mp-active", "mp-has-obs");
+          // Limpar badges de anexo e resetar botões de attach
+          form.querySelectorAll(".mp-attach-badge").forEach(function(b) { b.remove(); });
+          form.querySelectorAll(".mp-attach-btn").forEach(function (btn) {
+            btn.classList.remove("mp-attached");
+            // Se era obrigatório, volta ao estado laranja
+            if (btn.textContent.trim().indexOf("*") !== -1) {
+              btn.classList.add("mp-attach-required-empty");
+            }
           });
           checkForm();
           atualizarScore();
