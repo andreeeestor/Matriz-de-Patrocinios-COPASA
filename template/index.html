@@ -2532,8 +2532,20 @@
           var formData = new FormData(form);
           var data = {};
           for (var pair of formData.entries()) {
+            // Ignorar entradas de file input (attach_*) — coletamos os nomes separadamente
+            if (pair[0].startsWith("attach_")) continue;
             data[pair[0]] = pair[1];
           }
+
+          // Coletar nomes dos arquivos anexados e incluir no payload como _anexo
+          var attachFields = ["codigo_aprovacao", "data_prorrogacao", "sustentabilidade_nota", "portfolio_nota", "capacidade_tecnica_nota", "experiencia_resultados_nota"];
+          attachFields.forEach(function(fieldId) {
+            var fileInput = form.querySelector('[name="attach_' + fieldId + '"]');
+            if (fileInput && fileInput.files && fileInput.files.length > 0) {
+              var anexoKey = fieldId.endsWith("_nota") ? fieldId.replace("_nota", "_anexo") : fieldId + "_anexo";
+              data[anexoKey] = fileInput.files[0].name;
+            }
+          });
 
           // Se a IA já avaliou, sobrescrever _nota com pontuação numérica da IA
           // e mover as descrições textuais para os campos _obs correspondentes

@@ -100,7 +100,10 @@ def extrair_dados_planilha(file_bytes: bytes) -> dict:
     return {
         "nome_projeto": dados_extraidos.get("nome_projeto", "Não informado"),
         "proponente": dados_extraidos.get("proponente", "Não informado"),
-        "valor_solicitado": dados_extraidos.get("valor_solicitado_aporte", "Não informado"),
+        "objetivo": dados_extraidos.get("objetivo") or "",
+        "local_realizacao": dados_extraidos.get("local_realizacao") or "",
+        "periodo_realizacao": dados_extraidos.get("periodo_realizacao") or "",
+        "valor_solicitado": dados_extraidos.get("valor_solicitado_aporte") or dados_extraidos.get("valor_solicitado") or "",
         "pontuacao_total_obtida": pontuacao_total,
         "pontuacao_maxima_possivel": pontuacao_maxima,
         "detalhes_criterios": notas_criterios,
@@ -173,14 +176,35 @@ async def analisar_planilha_com_groq(dados_planilha: dict) -> dict:
                 "conclusao": "Análise processada pela IA local."
             }
         
+        # Calcular subtotais por eixo a partir dos detalhes_criterios
+        def soma_eixo(keys):
+            return sum(
+                dados_planilha["detalhes_criterios"].get(k, {}).get("nota_obtida", 0.0)
+                for k in keys
+            )
+
+        secoes_pontuacao = [
+            soma_eixo(["valores_organizacionais_nota", "diversidade_inclusao_nota", "sustentabilidade_nota"]),
+            soma_eixo(["portfolio_nota", "experiencia_incentivos_nota", "capacidade_tecnica_nota", "governanca_nota", "recursos_humanos_nota", "recursos_financeiros_nota", "experiencia_resultados_nota", "parcerias_nota"]),
+            soma_eixo(["beneficiarios_diretos_nota", "beneficiarios_indiretos_nota", "educacao_nota", "saude_nota", "inclusao_nota", "esg_nota", "diferencial_artistico_nota", "diferencial_social_nota", "diferencial_originalidade_nota", "diferencial_tecnico_nota", "diferencial_relacionamento_nota", "interesse_coletivo_nota"]),
+            soma_eixo(["plano_comunicacao_nota", "redes_sociais_nota", "monitoramento_nota", "conteudo_institucional_nota", "ativacoes_marca_nota", "direitos_imagem_nota", "contrapartida_imagem_nota", "site_oficial_nota", "exibicao_video_nota", "citacao_releases_nota"]),
+            soma_eixo(["voluntariado_corporativo_nota", "datas_comemorativas_nota", "engajamento_comunitario_nota"]),
+            soma_eixo(["captacao_nota", "execucao_garantida_nota", "cotas_nota"]),
+        ]
+
         return {
             "sucesso": True,
             "modelo_usado": settings.GROQ_MODEL,
             "dados_extraidos": {
                 "nome_projeto": dados_planilha["nome_projeto"],
                 "proponente": dados_planilha["proponente"],
+                "objetivo": dados_planilha.get("objetivo", ""),
+                "local_realizacao": dados_planilha.get("local_realizacao", ""),
+                "periodo_realizacao": dados_planilha.get("periodo_realizacao", ""),
+                "valor_solicitado": dados_planilha.get("valor_solicitado", ""),
                 "pontuacao_total_obtida": dados_planilha["pontuacao_total_obtida"],
                 "pontuacao_maxima_possivel": dados_planilha["pontuacao_maxima_possivel"],
+                "secoes_pontuacao": secoes_pontuacao,
             },
             "analise_ia": analise_json
         }

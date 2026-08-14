@@ -26,9 +26,11 @@ CELL_MAP = {
     "lei_incentivo": (23, 2),
     "nome_projeto": (24, 2),
     "codigo_aprovacao": (25, 2),
+    "codigo_aprovacao_anexo": (25, 3),
     "artigo_aprovacao": (26, 2),
     "data_publicacao": (27, 2),
     "data_prorrogacao": (28, 2),
+    "data_prorrogacao_anexo": (28, 3),
     "data_final_captacao": (29, 2),
     "valor_total_aprovacao": (30, 2),
     "valor_solicitado_aporte": (31, 2),
@@ -48,12 +50,15 @@ CELL_MAP = {
     "diversidade_inclusao_obs": (48, 4),
     "sustentabilidade_nota": (49, 3),
     "sustentabilidade_obs": (49, 4),
+    "sustentabilidade_anexo": (49, 5),
     "portfolio_nota": (55, 3),
     "portfolio_obs": (55, 4),
+    "portfolio_anexo": (55, 5),
     "experiencia_incentivos_nota": (56, 3),
     "experiencia_incentivos_obs": (56, 4),
     "capacidade_tecnica_nota": (57, 3),
     "capacidade_tecnica_obs": (57, 4),
+    "capacidade_tecnica_anexo": (57, 5),
     "governanca_nota": (58, 3),
     "governanca_obs": (58, 4),
     "recursos_humanos_nota": (59, 3),
@@ -62,6 +67,7 @@ CELL_MAP = {
     "recursos_financeiros_obs": (60, 4),
     "experiencia_resultados_nota": (61, 3),
     "experiencia_resultados_obs": (61, 4),
+    "experiencia_resultados_anexo": (61, 5),
     "parcerias_nota": (62, 3),
     "parcerias_obs": (62, 4),
     "beneficiarios_diretos_nota": (67, 3),
@@ -182,6 +188,11 @@ def gerar_planilha(dados: dict) -> bytes:
             cell = ws.cell(row=linha, column=coluna)
             if not isinstance(cell, MergedCell):
                 ws.cell(row=linha, column=coluna, value=valor)
+        elif campo.endswith("_anexo"):
+            # Nome do arquivo anexado → grava como texto na célula mapeada
+            cell = ws.cell(row=linha, column=coluna)
+            if not isinstance(cell, MergedCell) and valor:
+                ws.cell(row=linha, column=coluna, value=f"Anexo: {valor}")
         else:
             # Campo de dados normais
             cell = ws.cell(row=linha, column=coluna)
