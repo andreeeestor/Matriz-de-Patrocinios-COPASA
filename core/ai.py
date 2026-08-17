@@ -111,23 +111,42 @@ def extrair_dados_planilha(file_bytes: bytes) -> dict:
 
 async def chamar_llm(system_prompt: str, user_prompt: str, expect_json: bool = True) -> str:
     """Executa a requisição diretamente para a Groq Cloud API."""
+    import re
+
     if not settings.GROQ_API_KEY:
         raise Exception("GROQ_API_KEY não foi configurada no ambiente (.env ou servidor).")
+
+    # Modelos de reasoning (ex: openai/gpt-oss-*) não suportam response_format json_object
+    modelo = settings.GROQ_MODEL
+    usa_json_mode = expect_json and not any(
+        p in modelo.lower() for p in ["gpt-oss", "o1", "o3", "reasoning"]
+    )
+
+    # Para modelos que não suportam json_object, reforçar instrução no prompt
+    _user_prompt = user_prompt
+    if expect_json and not usa_json_mode:
+        _user_prompt += (
+            "\n\nIMPORTANTE: Responda APENAS com um objeto JSON válido, "
+            "sem nenhum texto antes ou depois. Não use markdown, não use ```json. "
+            "Apenas o objeto JSON puro."
+        )
 
     headers = {
         "Authorization": f"Bearer {settings.GROQ_API_KEY}",
         "Content-Type": "application/json"
     }
     payload = {
-        "model": settings.GROQ_MODEL,
+        "model": modelo,
         "messages": [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt}
+            {"role": "user", "content": _user_prompt}
         ],
-        "response_format": {"type": "json_object"} if expect_json else None,
         "temperature": 0.2
     }
-    async with httpx.AsyncClient(timeout=45.0) as client:
+    if usa_json_mode:
+        payload["response_format"] = {"type": "json_object"}
+
+    async with httpx.AsyncClient(timeout=60.0) as client:
         res = await client.post(
             "https://api.groq.com/openai/v1/chat/completions",
             headers=headers,
@@ -136,9 +155,24 @@ async def chamar_llm(system_prompt: str, user_prompt: str, expect_json: bool = T
         if res.status_code == 200:
             res_data = res.json()
             choices = res_data.get("choices", [])
-            return choices[0]["message"]["content"] if choices else "{}"
+            content = choices[0]["message"]["content"] if choices else "{}"
+
+            # Se esperamos JSON mas não usamos json_mode, extrair bloco JSON do texto
+            if expect_json and not usa_json_mode:
+                # Tenta extrair bloco ```json ... ``` ou { ... }
+                match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", content, re.DOTALL)
+                if match:
+                    content = match.group(1)
+                else:
+                    # Pega o primeiro { ... } que aparecer
+                    match = re.search(r"\{.*\}", content, re.DOTALL)
+                    if match:
+                        content = match.group(0)
+
+            return content
         else:
             raise Exception(f"API do Groq respondeu com status {res.status_code}: {res.text}")
+
 
 async def analisar_planilha_com_groq(dados_planilha: dict) -> dict:
     """Envia o diagnóstico de pontuação para a LLM (Ollama Local ou Groq) gerar recomendações inteligentes em JSON."""
