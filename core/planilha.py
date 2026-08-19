@@ -45,12 +45,6 @@ CELL_MAP = {
     "conta_corrente": (42, 2),
     "operacao": (43, 2),
     # Seção 1: Alinhamento Estratégico
-    "disseminacao_rede_nota": (48, 3),
-    "disseminacao_rede_obs": (48, 4),
-    "visibilidade_interesse_nota": (49, 3),
-    "visibilidade_interesse_obs": (49, 4),
-    "divulgacao_programas_nota": (50, 3),
-    "divulgacao_programas_obs": (50, 4),
     "valores_organizacionais_nota": (48, 3),
     "valores_organizacionais_obs": (48, 4),
     "diversidade_inclusao_nota": (49, 3),

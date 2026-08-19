@@ -255,30 +255,43 @@ async def analisar_planilha_com_groq(dados_planilha: dict) -> dict:
 
 async def avaliar_formulario_com_groq(dados_form: dict) -> dict:
     """Recebe os dados textuais do formulário preenchido e utiliza a IA Groq para avaliar e atribuir notas."""
+    import re
+    from .planilha import _to_num_or_none
+
     system_prompt = (
         "Você é um comitê avaliador especialista em projetos e patrocínios da COPASA. "
-        "Sua função é analisar as descrições, justificativas e opções selecionadas pelo proponente e ATRIBUIR UMA NOTA JUSTA "
-        "para cada critério de avaliação, respeitando rigorosamente a NOTA MÁXIMA de cada critério especificada abaixo:\n\n"
+        "Sua função é analisar as descrições, justificativas e informações prestadas pelo proponente e ATRIBUIR UMA NOTA JUSTA "
+        "para CADA UM DOS CRITÉRIOS DE AVALIAÇÃO abaixo, respeitando rigorosamente a NOTA MÁXIMA de cada critério:\n\n"
         f"LIMITES MÁXIMOS DE NOTA POR CRITÉRIO (MAX_SCORES):\n{json.dumps(MAX_SCORES, ensure_ascii=False, indent=2)}\n\n"
-        "Regras para atribuição de notas:\n"
-        "1. Para cada critério (ex: 'visibilidade_interesse_nota', 'divulgacao_programas_nota', 'portfolio_nota', etc.), avalie a resposta fornecida.\n"
-        "2. Atribua uma nota numérica entre 0 e a nota máxima do critério.\n"
-        "3. Forneça uma breve justificativa/observação (ex: 'visibilidade_interesse_obs') explicando o motivo da nota dada.\n"
-        "4. O critério 'disseminacao_rede_nota' e 'interesse_coletivo_nota' devem sempre receber nota 0.\n\n"
-        "RESPONDA EXCLUSIVAMENTE EM FORMATO JSON VÁLIDO no seguinte formato:\n"
+        "Critérios por Seção a serem obrigatoriamente avaliados:\n"
+        "- 1. Alinhamento Estratégico: valores_organizacionais_nota (máx 20), diversidade_inclusao_nota (máx 20), sustentabilidade_nota (máx 20), disseminacao_rede_nota (máx 0), visibilidade_interesse_nota (máx 20), divulgacao_programas_nota (máx 20)\n"
+        "- 2. Capacidade Institucional: portfolio_nota (máx 25), experiencia_incentivos_nota (máx 25), capacidade_tecnica_nota (máx 25), governanca_nota (máx 25), recursos_humanos_nota (máx 25), recursos_financeiros_nota (máx 25), experiencia_resultados_nota (máx 25), parcerias_nota (máx 25)\n"
+        "- 3. Impacto Social e ESG: beneficiarios_diretos_nota (máx 25), beneficiarios_indiretos_nota (máx 24), educacao_nota (máx 24), saude_nota (máx 24), inclusao_nota (máx 24), esg_nota (máx 24), diferencial_artistico_nota (máx 18), diferencial_social_nota (máx 18), diferencial_originalidade_nota (máx 18), diferencial_tecnico_nota (máx 18), diferencial_relacionamento_nota (máx 18), interesse_coletivo_nota (máx 0)\n"
+        "- 4. Comunicação e Marca: plano_comunicacao_nota (máx 33), redes_sociais_nota (máx 33), monitoramento_nota (máx 33), conteudo_institucional_nota (máx 33), ativacoes_marca_nota (máx 33), direitos_imagem_nota (máx 33), contrapartida_imagem_nota (máx 33), site_oficial_nota (máx 33), exibicao_video_nota (máx 33), citacao_releases_nota (máx 33)\n"
+        "- 5. Voluntariado: voluntariado_corporativo_nota (máx 20), datas_comemorativas_nota (máx 20), engajamento_comunitario_nota (máx 20)\n"
+        "- 6. Viabilidade Financeira: captacao_nota (máx 25), execucao_garantida_nota (máx 25), cotas_nota (máx 25)\n\n"
+        "RESPONDA EXCLUSIVAMENTE EM FORMATO JSON no seguinte esquema:\n"
         "{\n"
         '  "notas": {\n'
+        '     "valores_organizacionais_nota": 18,\n'
+        '     "valores_organizacionais_obs": "Justificativa...",\n'
+        '     "diversidade_inclusao_nota": 17,\n'
+        '     "diversidade_inclusao_obs": "Justificativa...",\n'
+        '     "sustentabilidade_nota": 18,\n'
+        '     "sustentabilidade_obs": "Justificativa...",\n'
         '     "disseminacao_rede_nota": 0,\n'
         '     "disseminacao_rede_obs": "Conforme informado pelo proponente",\n'
         '     "visibilidade_interesse_nota": 20,\n'
         '     "visibilidade_interesse_obs": "Justificativa...",\n'
         '     "divulgacao_programas_nota": 20,\n'
-        '     "divulgacao_programas_obs": "Justificativa..."\n'
-        '     ... (incluir TODOS os critérios terminados em _nota e seus _obs respectivos)\n'
+        '     "divulgacao_programas_obs": "Justificativa...",\n'
+        '     "portfolio_nota": 22,\n'
+        '     "portfolio_obs": "Justificativa...",\n'
+        '     ... (incluir todos os critérios)\n'
         '  },\n'
-        '  "resumo_avaliador": "Resumo geral da avaliação do comitê de IA",\n'
+        '  "resumo_avaliador": "Resumo executivo do comitê de IA",\n'
         '  "pontos_fortes": ["Destaques do projeto"],\n'
-        '  "oportunidades_melhoria": ["Pontos em que o proponente pode melhorar"]\n'
+        '  "oportunidades_melhoria": ["Recomendações práticas"]\n'
         "}"
     )
 
@@ -297,13 +310,27 @@ async def avaliar_formulario_com_groq(dados_form: dict) -> dict:
 
         for crit, max_val in MAX_SCORES.items():
             val_dado = notas_dict.get(crit, None)
-            if val_dado is None:
-                desc = str(dados_form.get(crit, "")).strip()
-                val_num = float(max_val) * 0.85 if len(desc) > 20 else (float(max_val) * 0.5 if len(desc) > 0 else 0.0)
-            else:
+            desc_form = str(dados_form.get(crit, "")).strip()
+
+            # Se o campo tiver opção com pontuação explícita selecionada (ex: "(20 pts)")
+            pts_explicit = _to_num_or_none(desc_form) if desc_form else None
+
+            if crit in ["disseminacao_rede_nota", "interesse_coletivo_nota"]:
+                val_num = 0.0
+            elif pts_explicit is not None and pts_explicit > 0:
+                val_num = float(pts_explicit)
+            elif val_dado is not None:
                 try:
                     val_num = float(val_dado)
                 except (ValueError, TypeError):
+                    val_num = 0.0
+            else:
+                # Fallback inteligente com base na qualidade/extensão do texto
+                if len(desc_form) > 30:
+                    val_num = float(max_val) * 0.85
+                elif len(desc_form) > 0:
+                    val_num = float(max_val) * 0.60
+                else:
                     val_num = 0.0
             
             val_num = max(0.0, min(val_num, float(max_val)))
@@ -311,7 +338,13 @@ async def avaliar_formulario_com_groq(dados_form: dict) -> dict:
             pontuacao_total += val_num
             
             obs_key = crit.replace("_nota", "_obs")
-            notas_ajustadas[obs_key] = notas_dict.get(obs_key, "Critério atende às diretrizes técnicas.")
+            obs_ia = notas_dict.get(obs_key, None)
+            if obs_ia:
+                notas_ajustadas[obs_key] = obs_ia
+            elif desc_form:
+                notas_ajustadas[obs_key] = desc_form
+            else:
+                notas_ajustadas[obs_key] = "Critério atende às diretrizes técnicas."
 
         return {
             "sucesso": True,
@@ -319,9 +352,9 @@ async def avaliar_formulario_com_groq(dados_form: dict) -> dict:
             "pontuacao_total_obtida": round(pontuacao_total, 2),
             "pontuacao_maxima_possivel": sum(MAX_SCORES.values()),
             "notas_atribuidas": notas_ajustadas,
-            "resumo_avaliador": eval_json.get("resumo_avaliador", "Projeto avaliado pela IA local com sucesso."),
-            "pontos_fortes": eval_json.get("pontos_fortes", ["Boa fundamentação das propostas"]),
-            "oportunidades_melhoria": eval_json.get("oportunidades_melhoria", ["Manter monitoramento constante dos indicadores"])
+            "resumo_avaliador": eval_json.get("resumo_avaliador", "Projeto avaliado pelo comitê de Inteligência Artificial da COPASA."),
+            "pontos_fortes": eval_json.get("pontos_fortes", ["Boa fundamentação técnica e institucional"]),
+            "oportunidades_melhoria": eval_json.get("oportunidades_melhoria", ["Manter monitoramento contínuo das ações"])
         }
     except Exception as e:
         return {
