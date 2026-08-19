@@ -44,13 +44,20 @@ CELL_MAP = {
     "agencia": (41, 2),
     "conta_corrente": (42, 2),
     "operacao": (43, 2),
-    "valores_organizacionais_nota": (47, 3),
-    "valores_organizacionais_obs": (47, 4),
-    "diversidade_inclusao_nota": (48, 3),
-    "diversidade_inclusao_obs": (48, 4),
-    "sustentabilidade_nota": (49, 3),
-    "sustentabilidade_obs": (49, 4),
-    "sustentabilidade_anexo": (49, 5),
+    # Seção 1: Alinhamento Estratégico
+    "disseminacao_rede_nota": (48, 3),
+    "disseminacao_rede_obs": (48, 4),
+    "visibilidade_interesse_nota": (49, 3),
+    "visibilidade_interesse_obs": (49, 4),
+    "divulgacao_programas_nota": (50, 3),
+    "divulgacao_programas_obs": (50, 4),
+    "valores_organizacionais_nota": (48, 3),
+    "valores_organizacionais_obs": (48, 4),
+    "diversidade_inclusao_nota": (49, 3),
+    "diversidade_inclusao_obs": (49, 4),
+    "sustentabilidade_nota": (50, 3),
+    "sustentabilidade_obs": (50, 4),
+    "sustentabilidade_anexo": (50, 5),
     "portfolio_nota": (55, 3),
     "portfolio_obs": (55, 4),
     "portfolio_anexo": (55, 5),
@@ -147,15 +154,22 @@ def parse_val(v):
     return 0.0
 
 def _to_num_or_none(valor):
-    """Tenta converter valor para número. Retorna None se for texto puro (descrição)."""
+    """Tenta converter valor para número. Extrai pontuações como '(20 pts)' se presentes."""
     if valor is None:
         return None
     if isinstance(valor, (int, float)):
         return float(valor)
     if isinstance(valor, str):
-        v = valor.replace(",", ".").strip()
+        v = valor.strip()
+        if not v:
+            return None
+        import re
+        match = re.search(r"\((\d+(?:\.\d+)?)\s*pts?\)", v, re.IGNORECASE)
+        if match:
+            return float(match.group(1))
+        v_clean = v.replace(",", ".").strip()
         try:
-            return float(v)
+            return float(v_clean)
         except ValueError:
             return None  # É um texto descritivo — vai para a coluna Obs
     return None
@@ -200,7 +214,10 @@ def gerar_planilha(dados: dict) -> bytes:
                 ws.cell(row=linha, column=coluna, value=valor)
 
     # Calcular subtotais por seção
-    sec1_keys = ["valores_organizacionais_nota", "diversidade_inclusao_nota", "sustentabilidade_nota"]
+    sec1_keys = [
+        "disseminacao_rede_nota", "visibilidade_interesse_nota", "divulgacao_programas_nota",
+        "valores_organizacionais_nota", "diversidade_inclusao_nota", "sustentabilidade_nota"
+    ]
     sec2_keys = ["portfolio_nota", "experiencia_incentivos_nota", "capacidade_tecnica_nota", "governanca_nota", "recursos_humanos_nota", "recursos_financeiros_nota", "experiencia_resultados_nota", "parcerias_nota"]
     sec3_keys = ["beneficiarios_diretos_nota", "beneficiarios_indiretos_nota", "educacao_nota", "saude_nota", "inclusao_nota", "esg_nota", "diferencial_artistico_nota", "diferencial_social_nota", "diferencial_originalidade_nota", "diferencial_tecnico_nota", "diferencial_relacionamento_nota", "interesse_coletivo_nota"]
     sec4_keys = ["plano_comunicacao_nota", "redes_sociais_nota", "monitoramento_nota", "conteudo_institucional_nota", "ativacoes_marca_nota", "direitos_imagem_nota", "contrapartida_imagem_nota", "site_oficial_nota", "exibicao_video_nota", "citacao_releases_nota"]

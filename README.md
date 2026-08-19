@@ -129,7 +129,7 @@ sequenceDiagram
 ### Inteligência Artificial
 | Tecnologia | Provedor | Modelo Padrão | Finalidade |
 | :--- | :--- | :--- | :--- |
-| **Groq Cloud LPU API** | Groq Inc. | `openai/gpt-oss-20b` | Avaliação de 39 critérios em JSON, diagnóstico executivo e cálculo de pontuação por eixo |
+| **Groq Cloud LPU API** | Groq Inc. | `groq/compound-mini` | Avaliação de critérios em JSON, diagnóstico executivo e cálculo de pontuação por eixo com altíssima velocidade e baixo consumo de tokens |
 
 ### Front-end
 | Tecnologia | Finalidade |
@@ -198,7 +198,7 @@ SECRET_KEY=sua_chave_secreta_jwt_aqui
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 GROQ_API_KEY=gsk_sua_chave_groq_aqui
-GROQ_MODEL=openai/gpt-oss-20b
+GROQ_MODEL=groq/compound-mini
 ```
 
 ### Passo 4: Verificar a Planilha Modelo
@@ -302,7 +302,7 @@ Verifica a conectividade e a validade da chave `GROQ_API_KEY`.
   {
     "status": "online",
     "provedor": "Groq Cloud LPU",
-    "modelo_configurado": "openai/gpt-oss-20b"
+    "modelo_configurado": "groq/compound-mini"
   }
   ```
 

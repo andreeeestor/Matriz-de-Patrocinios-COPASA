@@ -8,10 +8,15 @@ from .planilha import CELL_MAP
 settings = get_settings()
 
 MAX_SCORES = {
+    # 1. Alinhamento Estratégico (Total: 100 pontos)
     "valores_organizacionais_nota": 20,
     "diversidade_inclusao_nota": 20,
     "sustentabilidade_nota": 20,
+    "disseminacao_rede_nota": 0,  # Campo Sim/Não obrigatório de conformidade
+    "visibilidade_interesse_nota": 20,
+    "divulgacao_programas_nota": 20,
     
+    # 2. Capacidade Institucional
     "portfolio_nota": 25,
     "experiencia_incentivos_nota": 25,
     "capacidade_tecnica_nota": 25,
@@ -27,11 +32,11 @@ MAX_SCORES = {
     "saude_nota": 24,
     "inclusao_nota": 24,
     "esg_nota": 24,
-    "diferencial_artistico_nota": 23,
-    "diferencial_social_nota": 23,
-    "diferencial_originalidade_nota": 23,
-    "diferencial_tecnico_nota": 23,
-    "diferencial_relacionamento_nota": 23,
+    "diferencial_artistico_nota": 18,
+    "diferencial_social_nota": 18,
+    "diferencial_originalidade_nota": 18,
+    "diferencial_tecnico_nota": 18,
+    "diferencial_relacionamento_nota": 18,
     "interesse_coletivo_nota": 0,
     
     "plano_comunicacao_nota": 33,
@@ -45,9 +50,9 @@ MAX_SCORES = {
     "exibicao_video_nota": 33,
     "citacao_releases_nota": 33,
     
-    "voluntariado_corporativo_nota": 25,
-    "datas_comemorativas_nota": 25,
-    "engajamento_comunitario_nota": 25,
+    "voluntariado_corporativo_nota": 20,
+    "datas_comemorativas_nota": 20,
+    "engajamento_comunitario_nota": 20,
     
     "captacao_nota": 25,
     "execucao_garantida_nota": 25,
@@ -218,7 +223,7 @@ async def analisar_planilha_com_groq(dados_planilha: dict) -> dict:
             )
 
         secoes_pontuacao = [
-            soma_eixo(["valores_organizacionais_nota", "diversidade_inclusao_nota", "sustentabilidade_nota"]),
+            soma_eixo(["disseminacao_rede_nota", "visibilidade_interesse_nota", "divulgacao_programas_nota", "valores_organizacionais_nota", "diversidade_inclusao_nota", "sustentabilidade_nota"]),
             soma_eixo(["portfolio_nota", "experiencia_incentivos_nota", "capacidade_tecnica_nota", "governanca_nota", "recursos_humanos_nota", "recursos_financeiros_nota", "experiencia_resultados_nota", "parcerias_nota"]),
             soma_eixo(["beneficiarios_diretos_nota", "beneficiarios_indiretos_nota", "educacao_nota", "saude_nota", "inclusao_nota", "esg_nota", "diferencial_artistico_nota", "diferencial_social_nota", "diferencial_originalidade_nota", "diferencial_tecnico_nota", "diferencial_relacionamento_nota", "interesse_coletivo_nota"]),
             soma_eixo(["plano_comunicacao_nota", "redes_sociais_nota", "monitoramento_nota", "conteudo_institucional_nota", "ativacoes_marca_nota", "direitos_imagem_nota", "contrapartida_imagem_nota", "site_oficial_nota", "exibicao_video_nota", "citacao_releases_nota"]),
@@ -252,22 +257,24 @@ async def avaliar_formulario_com_groq(dados_form: dict) -> dict:
     """Recebe os dados textuais do formulário preenchido e utiliza a IA Groq para avaliar e atribuir notas."""
     system_prompt = (
         "Você é um comitê avaliador especialista em projetos e patrocínios da COPASA. "
-        "Sua função é analisar as descrições, justificativas e informações prestadas pelo proponente e ATRIBUIR UMA NOTA JUSTA "
+        "Sua função é analisar as descrições, justificativas e opções selecionadas pelo proponente e ATRIBUIR UMA NOTA JUSTA "
         "para cada critério de avaliação, respeitando rigorosamente a NOTA MÁXIMA de cada critério especificada abaixo:\n\n"
         f"LIMITES MÁXIMOS DE NOTA POR CRITÉRIO (MAX_SCORES):\n{json.dumps(MAX_SCORES, ensure_ascii=False, indent=2)}\n\n"
         "Regras para atribuição de notas:\n"
-        "1. Para cada critério (ex: 'valores_organizacionais_nota', 'portfolio_nota', etc.), avalie a qualidade da informação fornecida.\n"
+        "1. Para cada critério (ex: 'visibilidade_interesse_nota', 'divulgacao_programas_nota', 'portfolio_nota', etc.), avalie a resposta fornecida.\n"
         "2. Atribua uma nota numérica entre 0 e a nota máxima do critério.\n"
-        "3. Forneça uma breve justificativa/observação (ex: 'valores_organizacionais_obs') explicando o motivo da nota dada.\n"
-        "4. O critério 'interesse_coletivo_nota' deve sempre receber nota 0.\n\n"
+        "3. Forneça uma breve justificativa/observação (ex: 'visibilidade_interesse_obs') explicando o motivo da nota dada.\n"
+        "4. O critério 'disseminacao_rede_nota' e 'interesse_coletivo_nota' devem sempre receber nota 0.\n\n"
         "RESPONDA EXCLUSIVAMENTE EM FORMATO JSON VÁLIDO no seguinte formato:\n"
         "{\n"
         '  "notas": {\n'
-        '     "valores_organizacionais_nota": 18,\n'
-        '     "valores_organizacionais_obs": "Justificativa...",\n'
-        '     "diversidade_inclusao_nota": 15,\n'
-        '     "diversidade_inclusao_obs": "Justificativa..."\n'
-        '     ... (incluir TODOS os 39 critérios terminados em _nota e seus _obs respectivos)\n'
+        '     "disseminacao_rede_nota": 0,\n'
+        '     "disseminacao_rede_obs": "Conforme informado pelo proponente",\n'
+        '     "visibilidade_interesse_nota": 20,\n'
+        '     "visibilidade_interesse_obs": "Justificativa...",\n'
+        '     "divulgacao_programas_nota": 20,\n'
+        '     "divulgacao_programas_obs": "Justificativa..."\n'
+        '     ... (incluir TODOS os critérios terminados em _nota e seus _obs respectivos)\n'
         '  },\n'
         '  "resumo_avaliador": "Resumo geral da avaliação do comitê de IA",\n'
         '  "pontos_fortes": ["Destaques do projeto"],\n'

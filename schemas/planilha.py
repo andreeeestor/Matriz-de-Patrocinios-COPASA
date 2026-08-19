@@ -46,7 +46,13 @@ class PlanilhaData(BaseModel):
     conta_corrente: Optional[str] = None
     operacao: Optional[str] = None
 
-    # Avaliação - Notas e Observações
+    # Avaliação - Notas e Observações (Alinhamento Estratégico)
+    disseminacao_rede_nota: Optional[Any] = None
+    disseminacao_rede_obs: Optional[str] = None
+    visibilidade_interesse_nota: Optional[Any] = None
+    visibilidade_interesse_obs: Optional[str] = None
+    divulgacao_programas_nota: Optional[Any] = None
+    divulgacao_programas_obs: Optional[str] = None
     valores_organizacionais_nota: Optional[Any] = None
     valores_organizacionais_obs: Optional[str] = None
     diversidade_inclusao_nota: Optional[Any] = None
