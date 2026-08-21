@@ -1259,7 +1259,7 @@
                 required: true,
                 attach: true,
                 attachRequired: true,
-                attachLabel: "Comprovante de aprovação",
+                attachLabel: "Comprovante de aprovação (PDF)",
               },
               {
                 id: "artigo_aprovacao",
@@ -1278,7 +1278,7 @@
                 type: "date",
                 attach: true,
                 attachRequired: true,
-                attachLabel: "Documento de prorrogação",
+                attachLabel: "Documento de prorrogação (PDF)",
               },
               {
                 id: "data_final_captacao",
@@ -1352,7 +1352,7 @@
                 type: "textarea",
                 placeholder: "Descreva as práticas de sustentabilidade ambiental e social do projeto...",
                 attach: true,
-                attachLabel: "Foto ou documento de sustentabilidade (opcional)",
+                attachLabel: "Documento de sustentabilidade (PDF - opcional)",
               },
               {
                 id: "disseminacao_rede_nota",
@@ -1397,7 +1397,7 @@
                 placeholder: "Descreva o histórico e portfólio de projetos realizados pelo proponente...",
                 attach: true,
                 attachRequired: true,
-                attachLabel: "Arquivo de portfólio (PDF, imagens)",
+                attachLabel: "Arquivo de portfólio (PDF)",
               },
               {
                 id: "experiencia_incentivos_nota",
@@ -1411,7 +1411,7 @@
                 type: "textarea",
                 placeholder: "Descreva a capacidade técnica da equipe responsável...",
                 attach: true,
-                attachLabel: "Currículo ou certificações (opcional)",
+                attachLabel: "Currículo ou certificações (PDF - opcional)",
               },
               {
                 id: "governanca_nota",
@@ -1437,7 +1437,7 @@
                 type: "textarea",
                 placeholder: "Detalhamento de resultados mensuráveis de edições anteriores...",
                 attach: true,
-                attachLabel: "Relatórios ou registros de resultados (opcional)",
+                attachLabel: "Relatórios de resultados (PDF - opcional)",
               },
               {
                 id: "parcerias_nota",
@@ -1918,7 +1918,7 @@
               attachFileInput.id = "attach_" + field.id;
               attachFileInput.name = "attach_" + field.id;
               attachFileInput.style.display = "none";
-              attachFileInput.accept = ".pdf,.doc,.docx,.jpg,.jpeg,.png,.xlsx,.xls";
+              attachFileInput.accept = ".pdf";
               attachWrapper.appendChild(attachFileInput);
 
               var badgeContainer = document.createElement("div");
@@ -1935,6 +1935,17 @@
                   badgeCont.innerHTML = "";
                   if (this.files && this.files.length > 0) {
                     var file = this.files[0];
+
+                    // Validar se o arquivo é estritamente .pdf
+                    if (!file.name.toLowerCase().endsWith(".pdf")) {
+                      showToast("Apenas arquivos no formato .PDF são permitidos.", "error");
+                      fileInp.value = "";
+                      btn.classList.remove("mp-attached");
+                      if (fld.attachRequired) btn.classList.add("mp-attach-required-empty");
+                      checkForm();
+                      return;
+                    }
+
                     var fileSize = file.size > 1048576
                       ? (file.size / 1048576).toFixed(1) + ' MB'
                       : Math.round(file.size / 1024) + ' KB';

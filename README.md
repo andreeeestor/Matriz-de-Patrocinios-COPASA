@@ -348,16 +348,16 @@ Extrai os dados de uma planilha `.xlsx` enviada e solicita diagnóstico intelige
 
 ## 📎 Campos com Suporte a Anexos
 
-O formulário permite upload de documentos em 6 campos específicos. Os formatos aceitos são: `.pdf`, `.doc`, `.docx`, `.jpg`, `.jpeg`, `.png`, `.xlsx`, `.xls`.
+O formulário permite upload de documentos em 6 campos específicos no formato exclusivo **.PDF** (`.pdf`).
 
-| Campo | Seção | Tipo de Anexo | Obrigatório |
-| :--- | :--- | :--- | :---: |
-| **Código de Aprovação** | Informações do Projeto | Comprovante de aprovação | ✅ |
-| **Data de Prorrogação** | Informações do Projeto | Documento de prorrogação | ✅ |
-| **Portfólio** | Capacidade Institucional | Arquivo de portfólio (PDF, imagens) | ✅ |
-| **Sustentabilidade** | Alinhamento Estratégico | Foto ou documento de sustentabilidade | Opcional |
-| **Capacidade Técnica** | Capacidade Institucional | Currículo ou certificações | Opcional |
-| **Experiência e Resultados** | Capacidade Institucional | Relatórios ou registros de resultados | Opcional |
+| Campo | Seção | Tipo de Anexo | Obrigatório | Formato |
+| :--- | :--- | :--- | :---: | :---: |
+| **Código de Aprovação** | Informações do Projeto | Comprovante de aprovação | ✅ | `.pdf` |
+| **Data de Prorrogação** | Informações do Projeto | Documento de prorrogação | ✅ | `.pdf` |
+| **Portfólio** | Capacidade Institucional | Arquivo de portfólio | ✅ | `.pdf` |
+| **Sustentabilidade** | Alinhamento Estratégico | Documento de sustentabilidade | Opcional | `.pdf` |
+| **Capacidade Técnica** | Capacidade Institucional | Currículo ou certificações | Opcional | `.pdf` |
+| **Experiência e Resultados** | Capacidade Institucional | Relatórios ou registros de resultados | Opcional | `.pdf` |
 
 > **Nota:** Os campos obrigatórios (marcados com `*` no botão `+ Anexar`) bloqueiam a geração da planilha e a verificação de pontuação até que o arquivo seja adicionado.
 
